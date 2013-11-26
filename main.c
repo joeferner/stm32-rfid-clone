@@ -43,8 +43,10 @@ void setup() {
 
 void loop() {
   status_led_on();
+  rf_tx_on();
   delay_ms(500);
   status_led_off();
+  rf_tx_off();
   delay_ms(500);
 }
 

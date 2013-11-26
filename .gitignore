@@ -1,0 +1,11 @@
+*-cache.lib
+*.bak
+*.bck
+*.lib~
+*-bak
+build/
+*-swp
+nbproject/
+.idea/
+connection_info.h
+docs/

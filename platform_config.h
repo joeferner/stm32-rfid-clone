@@ -23,6 +23,19 @@ extern "C" {
 #define STATUS_LED_PORT        GPIOA
 #define STATUS_LED_PIN         GPIO_Pin_0
 
+#define RF_TX_TIMER            TIM3
+#define RF_TX_TIMER_CH_Init          TIM_OC3Init
+#define RF_TX_TIMER_CH_PreloadConfig TIM_OC3PreloadConfig
+#define RF_TX_TIMER_CH_SetCompare    TIM_SetCompare3
+#define RF_TX_TIMER_RCC        RCC_APB1Periph_TIM3
+#define RF_TX_RCC              RCC_APB2Periph_GPIOB | RCC_APB2Periph_AFIO
+#define RF_TX_PORT             GPIOB
+#define RF_TX_PIN              GPIO_Pin_0
+
+#define RF_RX_RCC              RCC_APB2Periph_GPIOB
+#define RF_RX_PORT             GPIOB
+#define RF_RX_PIN              GPIO_Pin_1
+
 #ifdef	__cplusplus
 }
 #endif

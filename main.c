@@ -8,7 +8,7 @@
 #include "time.h"
 #include "platform_config.h"
 
-#define PWM_PERIOD 0x2000
+#define PWM_PERIOD 285
 
 void setup();
 void loop();
@@ -115,7 +115,7 @@ void rf_tx_setup() {
    */
 
   // Compute the pre-scaler value
-  prescalerValue = (uint16_t) (SystemCoreClock / 3000000) - 1;
+  prescalerValue = (uint16_t) (SystemCoreClock / 30000000) - 1;
 
   // Time base configuration
   TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
@@ -143,7 +143,7 @@ void rf_tx_setup() {
 }
 
 void rf_tx_on() {
-  RF_TX_TIMER_CH_SetCompare(RF_TX_TIMER, 100);
+  RF_TX_TIMER_CH_SetCompare(RF_TX_TIMER, PWM_PERIOD / 2);
 }
 
 void rf_tx_off() {

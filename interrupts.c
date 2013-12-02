@@ -1,4 +1,8 @@
 
+#include "time.h"
+
+void on_exti9_5_irq();
+
 void NMI_Handler(void) {
 }
 
@@ -21,4 +25,12 @@ void DebugMon_Handler(void) {
 }
 
 void PendSV_Handler(void) {
+}
+
+void EXTI9_5_IRQHandler(void) {
+  on_exti9_5_irq();
+}
+
+void SysTick_Handler(void) {
+  time_SysTick_Handler();
 }

@@ -6,20 +6,23 @@
 #include "debug.h"
 #include "delay.h"
 #include "time.h"
+#include "usb.h"
+#include "ring_buffer.h"
 #include "platform_config.h"
 
 #define PWM_PERIOD 285
 
 void setup();
 void loop();
-void status_led_setup();
-void status_led_on();
-void status_led_off();
 void rf_tx_setup();
 void rf_tx_on();
 void rf_tx_off();
 void rf_rx_setup();
 void disable_jtag();
+
+#define INPUT_BUFFER_SIZE 100
+uint8_t usb_input_buffer[INPUT_BUFFER_SIZE];
+ring_buffer_u8 usb_input_ring_buffer;
 
 int main(void) {
   setup();
@@ -34,18 +37,20 @@ void setup() {
   // 2 bit for pre-emption priority, 2 bits for subpriority
   NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 
-  debug_setup();
-  status_led_setup();
+  ring_buffer_u8_init(&usb_input_ring_buffer, usb_input_buffer, INPUT_BUFFER_SIZE);
 
-  //  delay_ms(1000); // !!!! IMPORTANT: Keep this line in here. If we have a JTAG issue we need this time to get in before JTAG is disabled.
-  //  disable_jtag();
+  debug_setup();
+
+  usb_setup();
+
+  //delay_ms(1000); // !!!! IMPORTANT: Keep this line in here. If we have a JTAG issue we need this time to get in before JTAG is disabled.
+  //disable_jtag();
 
   time_setup();
 
   rf_tx_setup();
   rf_rx_setup();
 
-  status_led_on();
   rf_tx_on();
 
   debug_led_set(0);
@@ -54,6 +59,10 @@ void setup() {
 }
 
 void loop() {
+  delay_ms(1000);
+  debug_write_line("TEST");
+  usb_write((const uint8_t*) "TEST\n", 5);
+
   //  delay_ms(500);
   //  status_led_off();
   //  rf_tx_off();
@@ -70,28 +79,6 @@ void assert_failed(uint8_t* file, uint32_t line) {
   /* Infinite loop */
   while (1) {
   }
-}
-
-void status_led_setup() {
-  GPIO_InitTypeDef gpioConfig;
-
-  debug_write_line("?BEGIN status_led_setup");
-
-  RCC_APB2PeriphClockCmd(STATUS_LED_RCC, ENABLE);
-  gpioConfig.GPIO_Pin = STATUS_LED_PIN;
-  gpioConfig.GPIO_Mode = GPIO_Mode_Out_PP;
-  gpioConfig.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_Init(STATUS_LED_PORT, &gpioConfig);
-
-  debug_write_line("?END status_led_setup");
-}
-
-void status_led_on() {
-  GPIO_SetBits(STATUS_LED_PORT, STATUS_LED_PIN);
-}
-
-void status_led_off() {
-  GPIO_ResetBits(STATUS_LED_PORT, STATUS_LED_PIN);
 }
 
 void disable_jtag() {
@@ -167,7 +154,7 @@ void rf_tx_off() {
 
 void rf_rx_setup() {
   GPIO_InitTypeDef gpioConfig;
-  
+
   debug_write_line("?BEGIN rf_rx_setup");
 
   RCC_APB2PeriphClockCmd(RF_RX_RCC, ENABLE);
@@ -210,4 +197,14 @@ void on_exti9_5_irq() {
     }
   }
   EXTI_ClearITPendingBit(RF_RX_EXTI_LINE);
+}
+
+void usb_on_rx(uint8_t* data, uint16_t len) {
+#define MAX_LINE_LENGTH 100
+  char line[MAX_LINE_LENGTH];
+
+  ring_buffer_u8_write(&usb_input_ring_buffer, data, len);
+  while (ring_buffer_u8_readline(&usb_input_ring_buffer, line, MAX_LINE_LENGTH) > 0) {
+    debug_write_line(line);
+  }
 }

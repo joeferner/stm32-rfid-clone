@@ -45,12 +45,25 @@ SET(PROJECT_SOURCES
   ${STM32_USB_FS_DEVICE_LIB_DIR}/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_tim.c
   ${STM32_USB_FS_DEVICE_LIB_DIR}/Libraries/STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c
   ${STM32_USB_FS_DEVICE_LIB_DIR}/Libraries/STM32F10x_StdPeriph_Driver/src/misc.c
+  ${STM32_USB_FS_DEVICE_LIB_DIR}/Libraries/STM32_USB-FS-Device_Driver/src/usb_core.c
+  ${STM32_USB_FS_DEVICE_LIB_DIR}/Libraries/STM32_USB-FS-Device_Driver/src/usb_init.c
+  ${STM32_USB_FS_DEVICE_LIB_DIR}/Libraries/STM32_USB-FS-Device_Driver/src/usb_int.c
+  ${STM32_USB_FS_DEVICE_LIB_DIR}/Libraries/STM32_USB-FS-Device_Driver/src/usb_mem.c
+  ${STM32_USB_FS_DEVICE_LIB_DIR}/Libraries/STM32_USB-FS-Device_Driver/src/usb_regs.c
+  ${STM32_USB_FS_DEVICE_LIB_DIR}/Libraries/STM32_USB-FS-Device_Driver/src/usb_sil.c
   system_stm32f10x.c
   main.c
   interrupts.c
   debug.c
   delay.c
   time.c
+  ring_buffer.c
+  hw_config.c
+  usb.c
+  usb_desc.c
+  usb_istr.c
+  usb_prop.c
+  usb_pwr.c
 )
 
 ADD_EXECUTABLE(${CMAKE_PROJECT_NAME}.elf ${PROJECT_SOURCES} ${CMSIS_STARTUP_SOURCE})

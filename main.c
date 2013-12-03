@@ -58,10 +58,16 @@ void setup() {
   debug_write_line("?END setup");
 }
 
+typedef struct {
+  uint32_t time;
+} report_t;
+
 void loop() {
+  report_t r;
+
   delay_ms(1000);
-  debug_write_line("TEST");
-  usb_write((const uint8_t*) "TEST\n", 5);
+  r.time = time_ms();
+  usb_write((const uint8_t*) &r, sizeof (report_t));
 
   //  delay_ms(500);
   //  status_led_off();

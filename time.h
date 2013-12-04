@@ -22,7 +22,6 @@ extern "C" {
 
   void time_setup();
   volatile uint32_t time_ms();
-  volatile uint32_t time_us();
   void time_SysTick_Handler();
 
   struct tm * gmtime(register const time_t *timer);

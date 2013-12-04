@@ -11,9 +11,9 @@ extern "C" {
 #define ID2                    (0x1FFFF7EC)
 #define ID3                    (0x1FFFF7F0)
 
-#define USB_DISCONNECT_RCC     RCC_APB2Periph_GPIOA
-#define USB_DISCONNECT_PORT    GPIOA
-#define USB_DISCONNECT_PIN     GPIO_Pin_8
+#define USB_DISCONNECT_RCC     RCC_APB2Periph_GPIOB
+#define USB_DISCONNECT_PORT    GPIOB
+#define USB_DISCONNECT_PIN     GPIO_Pin_0
 
 #define DEBUG_LED_RCC          RCC_APB2Periph_GPIOA
 #define DEBUG_LED_PORT         GPIOA
@@ -37,13 +37,9 @@ extern "C" {
 #define RF_TX_PORT             GPIOB
 #define RF_TX_PIN              GPIO_Pin_10
 
-#define RF_RX_RCC              RCC_APB2Periph_GPIOB | RCC_APB2Periph_AFIO
-#define RF_RX_PORT             GPIOB
+#define RF_RX_RCC              RCC_APB2Periph_GPIOA | RCC_APB2Periph_AFIO
+#define RF_RX_PORT             GPIOA
 #define RF_RX_PIN              GPIO_Pin_8
-#define RF_RX_EXTI_LINE        EXTI_Line8
-#define RF_RX_EXTI_IRQ         EXTI9_5_IRQn
-#define RF_RX_EXTI_PORT        GPIO_PortSourceGPIOB
-#define RF_RX_EXTI_PIN         GPIO_PinSource8
 
 #ifdef	__cplusplus
 }

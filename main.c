@@ -24,7 +24,13 @@ void disable_jtag();
 uint8_t usb_input_buffer[INPUT_BUFFER_SIZE];
 ring_buffer_u8 usb_input_ring_buffer;
 
+#define CAPTURE_BUFFER_LEN 500
 uint32_t lastRfRxTime = 0;
+uint16_t capture1, capture2;
+uint16_t lastCapture;
+uint16_t capture1Diff, capture2Diff;
+uint16_t captureBuffer[CAPTURE_BUFFER_LEN];
+uint16_t captureBufferIndex = 0;
 
 typedef struct {
   uint32_t start;
@@ -49,7 +55,7 @@ void setup() {
 
   debug_setup();
 
-  usb_setup();
+  //usb_setup();
 
   //delay_ms(1000); // !!!! IMPORTANT: Keep this line in here. If we have a JTAG issue we need this time to get in before JTAG is disabled.
   //disable_jtag();
@@ -67,7 +73,14 @@ void setup() {
 }
 
 void loop() {
-  delay_ms(1000);
+  delay_ms(100);
+  if (captureBufferIndex == CAPTURE_BUFFER_LEN) {
+    for (int i = 0; i < CAPTURE_BUFFER_LEN; i++) {
+      debug_write_i32(captureBuffer[i], 10);
+      debug_write_line("");
+    }
+    captureBufferIndex++;
+  }
 
   //  delay_ms(500);
   //  status_led_off();
@@ -160,8 +173,12 @@ void rf_tx_off() {
 
 void rf_rx_setup() {
   GPIO_InitTypeDef gpioConfig;
+  NVIC_InitTypeDef nvicInit;
+  TIM_ICInitTypeDef timerInputCaptureInit;
 
   debug_write_line("?BEGIN rf_rx_setup");
+
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);
 
   RCC_APB2PeriphClockCmd(RF_RX_RCC, ENABLE);
   gpioConfig.GPIO_Pin = RF_RX_PIN;
@@ -169,42 +186,48 @@ void rf_rx_setup() {
   gpioConfig.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_Init(RF_RX_PORT, &gpioConfig);
 
-  GPIO_EXTILineConfig(RF_RX_EXTI_PORT, RF_RX_EXTI_PIN);
+  nvicInit.NVIC_IRQChannel = TIM1_CC_IRQn;
+  nvicInit.NVIC_IRQChannelPreemptionPriority = 0;
+  nvicInit.NVIC_IRQChannelSubPriority = 1;
+  nvicInit.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&nvicInit);
 
-  EXTI_InitTypeDef extiConfig;
-  extiConfig.EXTI_Line = RF_RX_EXTI_LINE;
-  extiConfig.EXTI_Mode = EXTI_Mode_Interrupt;
-  extiConfig.EXTI_Trigger = EXTI_Trigger_Rising_Falling;
-  extiConfig.EXTI_LineCmd = ENABLE;
-  EXTI_Init(&extiConfig);
+  TIM_ICStructInit(&timerInputCaptureInit);
+  timerInputCaptureInit.TIM_Channel = TIM_Channel_1;
+  timerInputCaptureInit.TIM_ICPolarity = TIM_ICPolarity_Rising;
+  timerInputCaptureInit.TIM_ICSelection = TIM_ICSelection_DirectTI;
+  timerInputCaptureInit.TIM_ICPrescaler = TIM_ICPSC_DIV1;
+  timerInputCaptureInit.TIM_ICFilter = 0x0;
+  TIM_ICInit(TIM1, &timerInputCaptureInit);
 
-  NVIC_InitTypeDef nvicConfig;
-  nvicConfig.NVIC_IRQChannel = RF_RX_EXTI_IRQ;
-  nvicConfig.NVIC_IRQChannelPreemptionPriority = 0x0F;
-  nvicConfig.NVIC_IRQChannelSubPriority = 0x0F;
-  nvicConfig.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&nvicConfig);
+  timerInputCaptureInit.TIM_Channel = TIM_Channel_2;
+  timerInputCaptureInit.TIM_ICPolarity = TIM_ICPolarity_Falling;
+  timerInputCaptureInit.TIM_ICSelection = TIM_ICSelection_IndirectTI;
+  timerInputCaptureInit.TIM_ICPrescaler = TIM_ICPSC_DIV1;
+  timerInputCaptureInit.TIM_ICFilter = 0x0;
+  TIM_ICInit(TIM1, &timerInputCaptureInit);
+
+  TIM_Cmd(TIM1, ENABLE);
+
+  TIM_ITConfig(TIM1, TIM_IT_CC1, ENABLE);
+  TIM_ITConfig(TIM1, TIM_IT_CC2, ENABLE);
 
   debug_write_line("?END rf_rx_setup");
 }
 
-void on_exti9_5_irq() {
-  report_t r;
+void on_time1_cc_irq() {
+  if (TIM_GetITStatus(TIM1, TIM_IT_CC1) == SET) {
+    TIM_ClearITPendingBit(TIM1, TIM_IT_CC1);
+    capture1 = TIM_GetCapture1(TIM1);
+    capture2 = TIM_GetCapture2(TIM1);
+    capture1Diff = capture1 - lastCapture;
+    capture2Diff = capture2 - lastCapture;
+    lastCapture = capture1;
 
-  if (EXTI_GetITStatus(RF_RX_EXTI_LINE) == SET) {
-    uint32_t duration = time_us() - lastRfRxTime;
-    r.start = 0x01020304;
-    r.duration = duration;
-    if (GPIO_ReadInputDataBit(RF_RX_PORT, RF_RX_PIN)) {
-      r.bit = 1;
-    } else {
-      r.bit = 0;
+    if (captureBufferIndex < CAPTURE_BUFFER_LEN) {
+      captureBuffer[captureBufferIndex++] = capture1Diff;
     }
-    lastRfRxTime = time_us();
-
-    usb_write((const uint8_t*) &r, sizeof (report_t));
   }
-  EXTI_ClearITPendingBit(RF_RX_EXTI_LINE);
 }
 
 void usb_on_rx(uint8_t* data, uint16_t len) {

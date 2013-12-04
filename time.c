@@ -3,14 +3,10 @@
 #include <stm32f10x.h>
 #include <core_cm3.h>
 
-volatile uint32_t counter_us = 0;
 volatile uint32_t counter_ms = 0;
 
 void time_SysTick_Handler() {
-  counter_us++;
-  if ((counter_us % 1000) == 0) {
-    counter_ms++;
-  }
+  counter_ms++;
 }
 
 void time_setup() {
@@ -41,14 +37,10 @@ void time_setup() {
    *      - Reload Value is the parameter to be passed for SysTick_Config() function
    *      - Reload Value should not exceed 0xFFFFFF
    */
-  if (SysTick_Config(SystemCoreClock / 1000 / 1000)) {
+  if (SysTick_Config(SystemCoreClock / 1000)) {
     /* Capture error */
     while (1);
   }
-}
-
-volatile uint32_t time_us() {
-  return counter_us;
 }
 
 volatile uint32_t time_ms() {

@@ -24,6 +24,14 @@ void disable_jtag();
 uint8_t usb_input_buffer[INPUT_BUFFER_SIZE];
 ring_buffer_u8 usb_input_ring_buffer;
 
+uint32_t lastRfRxTime = 0;
+
+typedef struct {
+  uint32_t start;
+  uint32_t duration;
+  uint32_t bit;
+} report_t;
+
 int main(void) {
   setup();
   while (1) {
@@ -58,16 +66,8 @@ void setup() {
   debug_write_line("?END setup");
 }
 
-typedef struct {
-  uint32_t time;
-} report_t;
-
 void loop() {
-  report_t r;
-
   delay_ms(1000);
-  r.time = time_ms();
-  usb_write((const uint8_t*) &r, sizeof (report_t));
 
   //  delay_ms(500);
   //  status_led_off();
@@ -188,19 +188,21 @@ void rf_rx_setup() {
   debug_write_line("?END rf_rx_setup");
 }
 
-uint32_t setTime = 0;
-
 void on_exti9_5_irq() {
+  report_t r;
+
   if (EXTI_GetITStatus(RF_RX_EXTI_LINE) == SET) {
+    uint32_t duration = time_us() - lastRfRxTime;
+    r.start = 0x01020304;
+    r.duration = duration;
     if (GPIO_ReadInputDataBit(RF_RX_PORT, RF_RX_PIN)) {
-      debug_led_set(1);
-      setTime = time_us();
+      r.bit = 1;
     } else {
-      debug_led_set(0);
-      uint32_t z = time_us() - setTime;
-      debug_write_u32(z, 10);
-      debug_write_line("");
+      r.bit = 0;
     }
+    lastRfRxTime = time_us();
+
+    usb_write((const uint8_t*) &r, sizeof (report_t));
   }
   EXTI_ClearITPendingBit(RF_RX_EXTI_LINE);
 }

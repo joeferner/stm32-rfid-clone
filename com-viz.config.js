@@ -8,13 +8,26 @@ exports.init = function(app) {
   });
 
   serialPort.on('error', function(err) {
-    console.log('err', err);
+    console.log('serial port error', err);
+    app.emitError(err);
   });
 
   serialPort.on('data', function(d) {
-    var time = d.readUInt32LE(0);
-    app.emitData([
-      time
-    ]);
+    //console.log(d.length, d);
+    for (var i = 0; i < d.length - 12;) {
+      var header = d.readUInt32LE(i);
+      if (header != 0x01020304) {
+        i++;
+        continue;
+      }
+      var duration = d.readUInt32LE(i + 4);
+      var bit = d.readUInt8(i + 8);
+      i += 12;
+      console.log("bit:", bit, "duration:", duration);
+//      app.emitData([
+//        duration,
+//        bit
+//      ]);
+    }
   });
 };

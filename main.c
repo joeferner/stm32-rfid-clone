@@ -183,17 +183,9 @@ void rf_rx_setup() {
   timerInputCaptureInit.TIM_ICFilter = 0x0;
   TIM_ICInit(TIM1, &timerInputCaptureInit);
 
-  timerInputCaptureInit.TIM_Channel = TIM_Channel_2;
-  timerInputCaptureInit.TIM_ICPolarity = TIM_ICPolarity_Falling;
-  timerInputCaptureInit.TIM_ICSelection = TIM_ICSelection_IndirectTI;
-  timerInputCaptureInit.TIM_ICPrescaler = TIM_ICPSC_DIV1;
-  timerInputCaptureInit.TIM_ICFilter = 0x0;
-  TIM_ICInit(TIM1, &timerInputCaptureInit);
-
   TIM_Cmd(TIM1, ENABLE);
 
   TIM_ITConfig(TIM1, TIM_IT_CC1, ENABLE);
-  TIM_ITConfig(TIM1, TIM_IT_CC2, ENABLE);
 
   debug_write_line("?END rf_rx_setup");
 }
@@ -202,9 +194,7 @@ void on_time1_cc_irq() {
   if (TIM_GetITStatus(TIM1, TIM_IT_CC1) == SET) {
     TIM_ClearITPendingBit(TIM1, TIM_IT_CC1);
     capture1 = TIM_GetCapture1(TIM1);
-    capture2 = TIM_GetCapture2(TIM1);
     capture1Diff = capture1 - lastCapture;
-    capture2Diff = capture2 - lastCapture;
     lastCapture = capture1;
 
     if (captureBufferIndex < CAPTURE_BUFFER_LEN) {

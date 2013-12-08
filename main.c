@@ -10,7 +10,8 @@
 #include "ring_buffer.h"
 #include "platform_config.h"
 
-#define PWM_PERIOD 285
+#define RX_TX_CARRIER_FREQ 125000
+#define RF_TX_PWM_PERIOD   (SystemCoreClock / RX_TX_CARRIER_FREQ)
 
 void setup();
 void loop();
@@ -107,7 +108,6 @@ void disable_jtag() {
 
 void rf_tx_setup() {
   GPIO_InitTypeDef GPIO_Config;
-  uint16_t prescalerValue = 0;
   TIM_TimeBaseInitTypeDef timeBaseInit;
   TIM_OCInitTypeDef ocInit;
 
@@ -123,27 +123,10 @@ void rf_tx_setup() {
   GPIO_Config.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_Init(RF_TX_PORT, &GPIO_Config);
 
-  /*
-   * TIM2 Configuration: generate 2 PWM signals with 2 different duty cycles:
-   * The TIM2CLK frequency is set to SystemCoreClock (Hz), to get TIM2 counter
-   * clock at 24 MHz the Pre-scaler is computed as following:
-   *  - Pre-scaler = (TIM2CLK / TIM2 counter clock) - 1
-   * SystemCoreClock is set to 72 MHz for Low-density, Medium-density, High-density
-   * and Connectivity line devices and to 24 MHz for Low-Density Value line and
-   * Medium-Density Value line devices
-   *
-   * The TIM2 is running at 36 KHz: TIM2 Frequency = TIM2 counter clock/(ARR + 1) = 24 MHz / 666 = 36 KHz
-   *     TIM2 Channel1 duty cycle = (TIM2_CCR1 / TIM2_ARR) * 100 = 50%
-   *     TIM2 Channel2 duty cycle = (TIM2_CCR2 / TIM2_ARR) * 100 = 37.5%
-   */
-
-  // Compute the pre-scaler value
-  prescalerValue = (uint16_t) (SystemCoreClock / 30000000) - 1;
-
   // Time base configuration
   TIM_TimeBaseStructInit(&timeBaseInit);
-  timeBaseInit.TIM_Period = PWM_PERIOD;
-  timeBaseInit.TIM_Prescaler = prescalerValue;
+  timeBaseInit.TIM_Period = RF_TX_PWM_PERIOD;
+  timeBaseInit.TIM_Prescaler = 0; //(uint16_t) (SystemCoreClock / 30000000) - 1;
   timeBaseInit.TIM_ClockDivision = 0;
   timeBaseInit.TIM_CounterMode = TIM_CounterMode_Up;
   TIM_TimeBaseInit(RF_TX_TIMER, &timeBaseInit);
@@ -164,7 +147,7 @@ void rf_tx_setup() {
 }
 
 void rf_tx_on() {
-  RF_TX_TIMER_CH_SetCompare(RF_TX_TIMER, PWM_PERIOD / 2);
+  RF_TX_TIMER_CH_SetCompare(RF_TX_TIMER, RF_TX_PWM_PERIOD / 2);
 }
 
 void rf_tx_off() {

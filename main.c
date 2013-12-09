@@ -11,8 +11,16 @@
 #include "ring_buffer.h"
 #include "platform_config.h"
 
-#define RX_TX_CARRIER_FREQ 125000
-#define RF_TX_PWM_PERIOD   (SystemCoreClock / RX_TX_CARRIER_FREQ)
+#define RF_TX_CARRIER_FREQ       125000
+#define RF_TX_PWM_PERIOD         (SystemCoreClock / RF_TX_CARRIER_FREQ)
+#define RF_RX_CENTER_0           (SystemCoreClock / (RF_TX_CARRIER_FREQ / 8))  /* 15.6kHz */
+#define RF_RX_CENTER_1           (SystemCoreClock / (RF_TX_CARRIER_FREQ / 10)) /* 12.5kHz */
+#define RF_RX_CENTER_DIFF        (RF_RX_CENTER_1 - RF_RX_CENTER_0)
+#define RF_RX_CENTER_DIFF_DIV_2  (RF_RX_CENTER_DIFF / 2)
+#define RF_RX_MIN_0              (RF_RX_CENTER_0 - RF_RX_CENTER_DIFF_DIV_2)
+#define RF_RX_MAX_0              (RF_RX_CENTER_0 + RF_RX_CENTER_DIFF_DIV_2)
+#define RF_RX_MIN_1              (RF_RX_CENTER_1 - RF_RX_CENTER_DIFF_DIV_2)
+#define RF_RX_MAX_1              (RF_RX_CENTER_1 + RF_RX_CENTER_DIFF_DIV_2)
 
 void setup();
 void loop();
@@ -24,6 +32,8 @@ void rf_rx_enable();
 void rf_rx_disable();
 void disable_jtag();
 void rf_rx_process_capture_buffer();
+uint16_t rf_rx_get(int i);
+void rf_rx_process(int i);
 
 #define INPUT_BUFFER_SIZE 100
 uint8_t usb_input_buffer[INPUT_BUFFER_SIZE];
@@ -198,7 +208,7 @@ void rf_rx_setup() {
   timerInputCaptureInit.TIM_ICPolarity = TIM_ICPolarity_Rising;
   timerInputCaptureInit.TIM_ICSelection = TIM_ICSelection_DirectTI;
   timerInputCaptureInit.TIM_ICPrescaler = TIM_ICPSC_DIV1;
-  timerInputCaptureInit.TIM_ICFilter = 0x0;
+  timerInputCaptureInit.TIM_ICFilter = 0x8;
   TIM_ICInit(TIM1, &timerInputCaptureInit);
 
   TIM_SelectCCDMA(TIM1, ENABLE);
@@ -221,24 +231,47 @@ void on_dma1_ch2_irq() {
 }
 
 void rf_rx_process_capture_buffer() {
-  if (rfRxCaptureBufferReady & RX_RX_CAPTURE_BUFFER_HIGH) {
-    for (int i = RF_RX_CAPTURE_BUFFER_LEN / 2; i < (RF_RX_CAPTURE_BUFFER_LEN / 2) + 1; i++) {
-      debug_write_i32(i, 10);
-      debug_write_ch(':');
-      debug_write_i32(rfRxCaptureBuffer[i + 1] - rfRxCaptureBuffer[i], 10);
-      debug_write_line("");
+  if (rfRxCaptureBufferReady & RX_RX_CAPTURE_BUFFER_LOW) {
+    rfRxCaptureBufferReady &= ~RX_RX_CAPTURE_BUFFER_LOW;
+    for (int i = 0; i < RF_RX_CAPTURE_BUFFER_LEN / 2; i++) {
+      rf_rx_process(i);
     }
-    rfRxCaptureBufferReady &= ~RX_RX_CAPTURE_BUFFER_HIGH;
   }
 
-  if (rfRxCaptureBufferReady & RX_RX_CAPTURE_BUFFER_LOW) {
-    for (int i = 0; i < 1; i++) {
-      debug_write_i32(i, 10);
-      debug_write_ch(':');
-      debug_write_i32(rfRxCaptureBuffer[i + 1] - rfRxCaptureBuffer[i], 10);
+  if (rfRxCaptureBufferReady & RX_RX_CAPTURE_BUFFER_HIGH) {
+    rfRxCaptureBufferReady &= ~RX_RX_CAPTURE_BUFFER_HIGH;
+    for (int i = RF_RX_CAPTURE_BUFFER_LEN / 2; i < RF_RX_CAPTURE_BUFFER_LEN; i++) {
+      rf_rx_process(i);
+    }
+  }
+}
+
+uint16_t rf_rx_get(int i) {
+  if (i > 0) {
+    return rfRxCaptureBuffer[i] - rfRxCaptureBuffer[i - 1];
+  } else {
+    return rfRxCaptureBuffer[i] - rfRxCaptureBuffer[RF_RX_CAPTURE_BUFFER_LEN - 1];
+  }
+}
+
+void rf_rx_process(int i) {
+  uint16_t t = rf_rx_get(i);
+  if (t == 0) {
+    return;
+  }
+
+  if (t >= RF_RX_MIN_0 && t <= RF_RX_MAX_0) {
+    debug_write_line("0");
+  } else if (t >= RF_RX_MIN_1 && t <= RF_RX_MAX_1) {
+    debug_write_line("1");
+  } else {
+    if (t < RF_RX_MIN_0) {
+      debug_write_i32(t, 10);
+      debug_write_line("");
+    } else {
+      debug_write_i32(t, 10);
       debug_write_line("");
     }
-    rfRxCaptureBufferReady &= ~RX_RX_CAPTURE_BUFFER_LOW;
   }
 }
 

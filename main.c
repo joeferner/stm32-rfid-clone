@@ -29,11 +29,11 @@ void rf_rx_process_capture_buffer();
 uint8_t usb_input_buffer[INPUT_BUFFER_SIZE];
 ring_buffer_u8 usb_input_ring_buffer;
 
+#define RX_RX_CAPTURE_BUFFER_HIGH 0x01
+#define RX_RX_CAPTURE_BUFFER_LOW  0x02
 #define RF_RX_CAPTURE_BUFFER_LEN 1000
 uint16_t rfRxCaptureBuffer[RF_RX_CAPTURE_BUFFER_LEN];
-uint rfRxProcessOffset;
-uint rfRxDmaLastCNDTR;
-volatile uint rfRxDmaToBeProcessedCount;
+volatile uint8_t rfRxCaptureBufferReady;
 
 typedef struct {
   uint32_t start;
@@ -75,7 +75,6 @@ void setup() {
 
   debug_led_set(0);
 
-  rfRxProcessOffset = 0;
 
   debug_write_line("?END setup");
 }
@@ -171,28 +170,34 @@ void rf_rx_setup() {
   gpioConfig.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_Init(RF_RX_PORT, &gpioConfig);
 
-  nvicInit.NVIC_IRQChannel = DMA1_Channel2_IRQn;
+  nvicInit.NVIC_IRQChannel = TIM1_CC_IRQn;
   nvicInit.NVIC_IRQChannelPreemptionPriority = 0;
   nvicInit.NVIC_IRQChannelSubPriority = 1;
   nvicInit.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&nvicInit);
 
-  DMA_DeInit(DMA1_Channel2);
-  DMA_StructInit(&dmaInit);
-  dmaInit.DMA_PeripheralBaseAddr = (uint32_t) & TIM1->CCR1;
-  dmaInit.DMA_MemoryBaseAddr = (uint32_t) & rfRxCaptureBuffer;
-  dmaInit.DMA_DIR = DMA_DIR_PeripheralSRC;
-  dmaInit.DMA_BufferSize = RF_RX_CAPTURE_BUFFER_LEN;
-  dmaInit.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
-  dmaInit.DMA_MemoryInc = DMA_MemoryInc_Enable;
-  dmaInit.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
-  dmaInit.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
-  dmaInit.DMA_Mode = DMA_Mode_Circular;
-  dmaInit.DMA_Priority = DMA_Priority_High;
-  dmaInit.DMA_M2M = DMA_M2M_Disable;
-  DMA_Init(DMA1_Channel2, &dmaInit);
-
-  DMA_ITConfig(DMA1_Channel2, DMA_IT_HT | DMA_IT_TC, ENABLE);
+  //  nvicInit.NVIC_IRQChannel = DMA1_Channel2_IRQn;
+  //  nvicInit.NVIC_IRQChannelPreemptionPriority = 0;
+  //  nvicInit.NVIC_IRQChannelSubPriority = 1;
+  //  nvicInit.NVIC_IRQChannelCmd = ENABLE;
+  //  NVIC_Init(&nvicInit);
+  //
+  //  DMA_DeInit(DMA1_Channel2);
+  //  DMA_StructInit(&dmaInit);
+  //  dmaInit.DMA_PeripheralBaseAddr = (uint32_t) & TIM1->CCR1;
+  //  dmaInit.DMA_MemoryBaseAddr = (uint32_t) & rfRxCaptureBuffer;
+  //  dmaInit.DMA_DIR = DMA_DIR_PeripheralSRC;
+  //  dmaInit.DMA_BufferSize = 1; //RF_RX_CAPTURE_BUFFER_LEN;
+  //  dmaInit.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+  //  dmaInit.DMA_MemoryInc = DMA_MemoryInc_Enable;
+  //  dmaInit.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
+  //  dmaInit.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
+  //  dmaInit.DMA_Mode = DMA_Mode_Circular;
+  //  dmaInit.DMA_Priority = DMA_Priority_High;
+  //  dmaInit.DMA_M2M = DMA_M2M_Disable;
+  //  DMA_Init(DMA1_Channel2, &dmaInit);
+  //
+  //  DMA_ITConfig(DMA1_Channel2, DMA_IT_HT | DMA_IT_TC, ENABLE);
 
   TIM_ICStructInit(&timerInputCaptureInit);
   timerInputCaptureInit.TIM_Channel = TIM_Channel_1;
@@ -202,9 +207,11 @@ void rf_rx_setup() {
   timerInputCaptureInit.TIM_ICFilter = 0x0;
   TIM_ICInit(TIM1, &timerInputCaptureInit);
 
-  TIM_SelectCCDMA(TIM1, ENABLE);
+  TIM_ITConfig(TIM1, TIM_IT_CC1, ENABLE);
 
-  TIM_DMACmd(TIM1, TIM_DMA_CC1, ENABLE);
+  //  TIM_SelectCCDMA(TIM1, ENABLE);
+  //
+  //  TIM_DMACmd(TIM1, TIM_DMA_CC1, ENABLE);
 
   debug_write_line("?END rf_rx_setup");
 }
@@ -212,45 +219,65 @@ void rf_rx_setup() {
 void on_dma1_ch2_irq() {
   if (DMA_GetITStatus(DMA1_IT_TC2) || DMA_GetITStatus(DMA1_IT_HT2)) {
     DMA_ClearITPendingBit(DMA1_IT_GL2);
-    int count = rfRxDmaLastCNDTR - DMA1_Channel2->CNDTR;
-    rfRxDmaLastCNDTR = DMA1_Channel2->CNDTR;
-    if (count < 0) {
-      count += RF_RX_CAPTURE_BUFFER_LEN;
+    uint16_t dmaLeftToWrite = DMA1_Channel2->CNDTR;
+    debug_write_line("irq");
+    debug_write_i32(rfRxCaptureBuffer[0], 10);
+    debug_write(",");
+    debug_write_i32(TIM_GetCapture1(TIM1), 10);
+    debug_write_line("");
+    if (dmaLeftToWrite > (RF_RX_CAPTURE_BUFFER_LEN / 2)) {
+      rfRxCaptureBufferReady |= RX_RX_CAPTURE_BUFFER_HIGH;
+    } else {
+      rfRxCaptureBufferReady |= RX_RX_CAPTURE_BUFFER_LOW;
     }
-    rfRxDmaToBeProcessedCount += count;
-    if (rfRxDmaToBeProcessedCount > RF_RX_CAPTURE_BUFFER_LEN) {
-      rfRxDmaToBeProcessedCount = 0;
-      debug_write_line("Buffer overflow");
-    }
+  }
+}
+
+uint16_t lastCapture;
+
+void on_tim1_cc_irq() {
+  if (TIM_GetITStatus(TIM1, TIM_IT_CC1) == SET) {
+    TIM_ClearITPendingBit(TIM1, TIM_IT_CC1);
+    lastCapture = TIM_GetCapture1(TIM1);
   }
 }
 
 void rf_rx_process_capture_buffer() {
-  while (rfRxDmaToBeProcessedCount > 0) {
-    uint16_t val = rfRxCaptureBuffer[rfRxProcessOffset];
+  delay_ms(1000);
+  debug_write_i32(lastCapture, 10);
+  debug_write_ch(',');
+  debug_write_i32(TIM_GetCapture1(TIM1), 10);
+  debug_write_line("");
 
-    debug_write_i32(val, 10);
-    debug_write_line("");
-
-    rfRxProcessOffset++;
-    if (rfRxProcessOffset >= RF_RX_CAPTURE_BUFFER_LEN) {
-      rfRxProcessOffset = 0;
+  if (rfRxCaptureBufferReady & RX_RX_CAPTURE_BUFFER_HIGH) {
+    for (int i = RF_RX_CAPTURE_BUFFER_LEN / 2; i < (RF_RX_CAPTURE_BUFFER_LEN / 2) + 1; i++) {
+      debug_write_i32(i, 10);
+      debug_write_ch(':');
+      debug_write_i32(rfRxCaptureBuffer[i], 10);
+      debug_write_line("");
     }
-    rfRxDmaToBeProcessedCount--;
+    rfRxCaptureBufferReady &= ~RX_RX_CAPTURE_BUFFER_HIGH;
+  }
+
+  if (rfRxCaptureBufferReady & RX_RX_CAPTURE_BUFFER_LOW) {
+    for (int i = 0; i < 1; i++) {
+      debug_write_i32(i, 10);
+      debug_write_ch(':');
+      debug_write_i32(rfRxCaptureBuffer[i], 10);
+      debug_write_line("");
+    }
+    rfRxCaptureBufferReady &= ~RX_RX_CAPTURE_BUFFER_LOW;
   }
 }
 
 void rf_rx_enable() {
-  rfRxProcessOffset = 0;
-  rfRxDmaToBeProcessedCount = 0;
-  rfRxDmaLastCNDTR = RF_RX_CAPTURE_BUFFER_LEN;
-  DMA1_Channel2->CNDTR = RF_RX_CAPTURE_BUFFER_LEN;
-  DMA1_Channel2->CMAR = (uint32_t) & rfRxCaptureBuffer;
-  DMA_Cmd(DMA1_Channel2, ENABLE);
+  debug_write_line("?rf_rx_enable");
+  //DMA_Cmd(DMA1_Channel2, ENABLE);
   TIM_Cmd(TIM1, ENABLE);
 }
 
 void rf_rx_disable() {
+  debug_write_line("?rf_rx_disable");
   DMA_Cmd(DMA1_Channel2, DISABLE);
   TIM_Cmd(TIM1, DISABLE);
 }

@@ -36,8 +36,8 @@ uint16_t rf_rx_get(int i);
 void rf_rx_process(int i);
 
 #define INPUT_BUFFER_SIZE 100
-uint8_t usb_input_buffer[INPUT_BUFFER_SIZE];
-ring_buffer_u8 usb_input_ring_buffer;
+uint8_t usbInputBuffer[INPUT_BUFFER_SIZE];
+ring_buffer_u8 usbInputRingBuffer;
 
 #define RX_RX_CAPTURE_BUFFER_HIGH 0x01
 #define RX_RX_CAPTURE_BUFFER_LOW  0x02
@@ -67,7 +67,7 @@ void setup() {
   // 2 bit for pre-emption priority, 2 bits for subpriority
   NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 
-  ring_buffer_u8_init(&usb_input_ring_buffer, usb_input_buffer, INPUT_BUFFER_SIZE);
+  ring_buffer_u8_init(&usbInputRingBuffer, usbInputBuffer, INPUT_BUFFER_SIZE);
 
   debug_setup();
 
@@ -291,8 +291,8 @@ void usb_on_rx(uint8_t* data, uint16_t len) {
 #define MAX_LINE_LENGTH 100
   char line[MAX_LINE_LENGTH];
 
-  ring_buffer_u8_write(&usb_input_ring_buffer, data, len);
-  while (ring_buffer_u8_readline(&usb_input_ring_buffer, line, MAX_LINE_LENGTH) > 0) {
+  ring_buffer_u8_write(&usbInputRingBuffer, data, len);
+  while (ring_buffer_u8_readline(&usbInputRingBuffer, line, MAX_LINE_LENGTH) > 0) {
     debug_write_line(line);
   }
 }

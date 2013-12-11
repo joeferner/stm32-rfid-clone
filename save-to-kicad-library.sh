@@ -1,4 +1,4 @@
 #!/bin/bash
 
-kicad-split --yes -i stm32-48pin-devBoard.mod -o ./kicad-library/mods/
-kicad-split --yes -i stm32-48pin-devBoard.lib -o ./kicad-library/libs/
+kicad-split --yes -i hardware/stm32-rfid-clone.mod -o ./kicad-library/mods/
+kicad-split --yes -i hardware/stm32-rfid-clone.lib -o ./kicad-library/libs/

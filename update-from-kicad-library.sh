@@ -1,4 +1,4 @@
 #!/bin/bash
 
-kicad-update -i stm32-48pin-devBoard.mod.list -o stm32-48pin-devBoard.mod --basedir ./kicad-library
-kicad-update -i stm32-48pin-devBoard.lib.list -o stm32-48pin-devBoard.lib --basedir ./kicad-library
+kicad-update -i hardware/stm32-rfid-clone.mod.list -o hardware/stm32-rfid-clone.mod --basedir ./kicad-library
+kicad-update -i hardware/stm32-rfid-clone.lib.list -o hardware/stm32-rfid-clone.lib --basedir ./kicad-library

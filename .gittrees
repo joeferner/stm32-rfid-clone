@@ -1,0 +1,4 @@
+[subtree "kicad-library"]
+	url = git@github.com:joeferner/kicad-library.git
+	path = kicad-library
+	branch = master

@@ -1,6 +1,6 @@
 libs/+3.3V.lib
 libs/+5V.lib
-libs/GND2.lib
+libs/GNDPWR.lib
 libs/USB.lib
 libs/R.lib
 libs/C.lib

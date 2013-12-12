@@ -1,7 +1,7 @@
 libs/+3.3V.lib
 libs/+5V.lib
 libs/GND2.lib
-libs/USB2.lib
+libs/USB.lib
 libs/R.lib
 libs/C.lib
 libs/STM32-48PIN.lib

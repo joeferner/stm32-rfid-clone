@@ -14,3 +14,4 @@ libs/PWR_FLAG.lib
 libs/MECH.lib
 libs/LED.lib
 libs/MOSFET-P.lib
+libs/DIODESCH.lib

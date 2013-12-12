@@ -1,11 +1,11 @@
 libs/+3.3V.lib
 libs/+5V.lib
 libs/GND2.lib
+libs/USB2.lib
 libs/R.lib
 libs/C.lib
 libs/STM32-48PIN.lib
 libs/CRYSTAL.lib
-libs/USB2.lib
 libs/VREG_VOUTCENTER.lib
 libs/BTN_SPST.lib
 libs/P02.lib

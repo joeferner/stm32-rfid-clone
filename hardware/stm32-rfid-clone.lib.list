@@ -4,6 +4,7 @@ libs/GNDPWR.lib
 libs/USB.lib
 libs/R.lib
 libs/C.lib
+libs/CP.lib
 libs/STM32-48PIN.lib
 libs/CRYSTAL.lib
 libs/VREG_VOUTCENTER.lib
@@ -15,3 +16,5 @@ libs/MECH.lib
 libs/LED.lib
 libs/MOSFET-P.lib
 libs/DIODESCH.lib
+libs/AP6502.lib
+libs/INDUCTOR.lib

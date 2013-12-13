@@ -12,7 +12,8 @@ libs/TP.lib
 libs/STM32-48PIN.lib
 libs/CRYSTAL.lib
 libs/VREG_VOUTCENTER.lib
-libs/BTN_SPST.lib
+libs/SPST.lib
+libs/SPDT.lib
 libs/P02.lib
 libs/JTAG10.lib
 libs/PWR_FLAG.lib

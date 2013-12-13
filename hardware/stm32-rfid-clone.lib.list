@@ -1,5 +1,6 @@
 libs/+3.3V.lib
 libs/+5V.lib
+libs/+9V.lib
 libs/GNDPWR.lib
 libs/USB.lib
 libs/R.lib
@@ -16,5 +17,8 @@ libs/MECH.lib
 libs/LED.lib
 libs/MOSFET-P.lib
 libs/DIODESCH.lib
+libs/DIODE.lib
 libs/AP6502.lib
 libs/INDUCTOR.lib
+libs/NPN.lib
+libs/PNP.lib

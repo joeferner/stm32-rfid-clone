@@ -19,6 +19,7 @@ libs/JTAG10.lib
 libs/PWR_FLAG.lib
 libs/MECH.lib
 libs/LED.lib
+libs/LED-BI.lib
 libs/MOSFET-P.lib
 libs/DIODESCH.lib
 libs/DIODE.lib

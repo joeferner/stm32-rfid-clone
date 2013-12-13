@@ -4,9 +4,11 @@ libs/+9V.lib
 libs/GNDPWR.lib
 libs/USB.lib
 libs/R.lib
+libs/POT.lib
 libs/C.lib
 libs/CP.lib
 libs/CVAR.lib
+libs/TP.lib
 libs/STM32-48PIN.lib
 libs/CRYSTAL.lib
 libs/VREG_VOUTCENTER.lib

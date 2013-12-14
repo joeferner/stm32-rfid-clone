@@ -22,6 +22,7 @@ libs/MECH.lib
 libs/LED.lib
 libs/LED-BI.lib
 libs/MOSFET-P.lib
+libs/MOSFET-N.lib
 libs/DIODESCH.lib
 libs/DIODE.lib
 libs/AP6502.lib

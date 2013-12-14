@@ -30,3 +30,5 @@ libs/INDUCTOR.lib
 libs/NPN.lib
 libs/PNP.lib
 libs/LM324.lib
+libs/PIEZO.lib
+libs/MIC2288.lib

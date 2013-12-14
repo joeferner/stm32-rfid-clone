@@ -1,0 +1,738 @@
+Cmp-Mod V01 Created by CvPcb (2013-12-12 BZR 4550)-product date = Sat 14 Dec 2013 12:06:37 PM EST
+
+BeginCmp
+TimeStamp = /52A7C903;
+Reference = C101;
+ValeurCmp = 0.1uF;
+IdModule  = stm32:CAPC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52A7B27F;
+Reference = C102;
+ValeurCmp = 48pF;
+IdModule  = stm32:CAPC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52A7B221;
+Reference = C103;
+ValeurCmp = 0.1uF;
+IdModule  = stm32:CAPC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52A7B274;
+Reference = C104;
+ValeurCmp = 48pF;
+IdModule  = stm32:CAPC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52A7B23D;
+Reference = C105;
+ValeurCmp = 0.1uF;
+IdModule  = stm32:CAPC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52A7B248;
+Reference = C106;
+ValeurCmp = 0.1uF;
+IdModule  = stm32:CAPC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52A7B2A8;
+Reference = C107;
+ValeurCmp = 0.1uF;
+IdModule  = stm32:CAPC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52A7B269;
+Reference = C108;
+ValeurCmp = 18pF;
+IdModule  = stm32:CAPC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52A7B253;
+Reference = C109;
+ValeurCmp = 0.1uF;
+IdModule  = stm32:CAPC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52A7B25E;
+Reference = C110;
+ValeurCmp = 18pF;
+IdModule  = stm32:CAPC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52A7C395;
+Reference = C111;
+ValeurCmp = 10uF;
+IdModule  = stm32:CAPC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA5FD7;
+Reference = C112;
+ValeurCmp = 10uF;
+IdModule  = stm32:CAPC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA591C;
+Reference = C113;
+ValeurCmp = 0.1uF;
+IdModule  = stm32:CAPC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA5E32;
+Reference = C114;
+ValeurCmp = 0.1uF;
+IdModule  = stm32:CAPC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA5B1E;
+Reference = C115;
+ValeurCmp = 6.8nF;
+IdModule  = stm32:CAPC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA5A4F;
+Reference = C116;
+ValeurCmp = 10uF;
+IdModule  = stm32:CAPC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52ACAA7F;
+Reference = C117;
+ValeurCmp = 10uF;
+IdModule  = stm32:CAPC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52ACAA74;
+Reference = C118;
+ValeurCmp = 10uF;
+IdModule  = stm32:CAPC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA9035;
+Reference = C201;
+ValeurCmp = 100pF;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA8B4D;
+Reference = C202;
+ValeurCmp = 1000pF;
+IdModule  = stm32:CAPC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA8B59;
+Reference = C203;
+ValeurCmp = 2200pF;
+IdModule  = stm32:CAPC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA8B81;
+Reference = C204;
+ValeurCmp = 1000pF;
+IdModule  = stm32:CAPC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA8B99;
+Reference = C205;
+ValeurCmp = 1000pF;
+IdModule  = stm32:CAPC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA8B9F;
+Reference = C206;
+ValeurCmp = 1000pF;
+IdModule  = stm32:CAPC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA8BD2;
+Reference = C207;
+ValeurCmp = 1000pF;
+IdModule  = stm32:CAPC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA8BD8;
+Reference = C208;
+ValeurCmp = 1000pF;
+IdModule  = stm32:CAPC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA9BF1;
+Reference = C209;
+ValeurCmp = 1000pF;
+IdModule  = stm32:CAPC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA9B47;
+Reference = C210;
+ValeurCmp = 1000pF;
+IdModule  = stm32:CAPC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA0433;
+Reference = D101;
+ValeurCmp = DIODESCH;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA0445;
+Reference = D102;
+ValeurCmp = DIODESCH;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AAAD04;
+Reference = D103;
+ValeurCmp = READIND;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA98AC;
+Reference = D104;
+ValeurCmp = PWR;
+IdModule  = stm32:LEDC3216X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AC8ACD;
+Reference = D105;
+ValeurCmp = DIODESCH;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /52ACAA17;
+Reference = D106;
+ValeurCmp = DIODESCH;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA8AF6;
+Reference = D201;
+ValeurCmp = DIODE;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA8AF0;
+Reference = D202;
+ValeurCmp = DIODE;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA8B44;
+Reference = D203;
+ValeurCmp = DIODE;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA0F48;
+Reference = J101;
+ValeurCmp = USB;
+IdModule  = stm32:JST_UB-MC5BR3-SD204-4S-NMP;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA566E;
+Reference = L101;
+ValeurCmp = 20uH;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /52ACA9EE;
+Reference = L102;
+ValeurCmp = 20uH;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /52A7CC8F;
+Reference = M101;
+ValeurCmp = Mouting Hole;
+IdModule  = stm32:MTGNP565H328Z565P;
+EndCmp
+
+BeginCmp
+TimeStamp = /52A7CDB7;
+Reference = M102;
+ValeurCmp = Mouting Hole;
+IdModule  = stm32:MTGNP565H328Z565P;
+EndCmp
+
+BeginCmp
+TimeStamp = /52A7CDD3;
+Reference = M103;
+ValeurCmp = Mouting Hole;
+IdModule  = stm32:MTGNP565H328Z565P;
+EndCmp
+
+BeginCmp
+TimeStamp = /52A7CCB2;
+Reference = M104;
+ValeurCmp = Mouting Hole;
+IdModule  = stm32:MTGNP565H328Z565P;
+EndCmp
+
+BeginCmp
+TimeStamp = /52A7BF20;
+Reference = P101;
+ValeurCmp = JTAG10;
+IdModule  = stm32:SHDRV10W66P254_2X5_2035X870X609P;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA077F;
+Reference = P102;
+ValeurCmp = BATTERY;
+IdModule  = stm32:HDRV2W66P254_1X2_508X249X838P;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA9D60;
+Reference = P103;
+ValeurCmp = DEBUG;
+IdModule  = stm32:HDRV3W66P254_1X3_762X249X838P;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA8B3B;
+Reference = P201;
+ValeurCmp = ANT;
+IdModule  = stm32:HDRV2W66P254_1X2_508X249X838P;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AC9074;
+Reference = PIEZO101;
+ValeurCmp = PIEZO;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA8AE2;
+Reference = Q201;
+ValeurCmp = 2N2222;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA8B02;
+Reference = Q202;
+ValeurCmp = 2N2222;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA8B25;
+Reference = Q203;
+ValeurCmp = 2N2907;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /52A7B5AA;
+Reference = R101;
+ValeurCmp = 22R;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52A7B5C6;
+Reference = R102;
+ValeurCmp = 22R;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52A7B7DB;
+Reference = R103;
+ValeurCmp = 10K;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52A7B7B5;
+Reference = R104;
+ValeurCmp = 1.5K;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52A7E04A;
+Reference = R105;
+ValeurCmp = 10K;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AABAB7;
+Reference = R106;
+ValeurCmp = 10K;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AAAD67;
+Reference = R107;
+ValeurCmp = 100R;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AAAD5C;
+Reference = R108;
+ValeurCmp = 100R;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52A7D054;
+Reference = R109;
+ValeurCmp = 1.5K;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA9C20;
+Reference = R110;
+ValeurCmp = 100R;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA54F3;
+Reference = R111;
+ValeurCmp = 100K;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA5B2E;
+Reference = R112;
+ValeurCmp = 6.8K;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA5720;
+Reference = R113;
+ValeurCmp = 26.1K;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA572B;
+Reference = R114;
+ValeurCmp = 10K;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AC8AF6;
+Reference = R115;
+ValeurCmp = ?;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52ACAA52;
+Reference = R116;
+ValeurCmp = 31.6K;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52ACAA5D;
+Reference = R117;
+ValeurCmp = 5K;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA8ADA;
+Reference = R201;
+ValeurCmp = 1.2K;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA8AFC;
+Reference = R202;
+ValeurCmp = 470R;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA8B19;
+Reference = R203;
+ValeurCmp = 10R;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA8B1F;
+Reference = R204;
+ValeurCmp = 10R;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA8B60;
+Reference = R205;
+ValeurCmp = 390K;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA8B87;
+Reference = R206;
+ValeurCmp = 1M;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA8B93;
+Reference = R207;
+ValeurCmp = 1.82K;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA8B8D;
+Reference = R208;
+ValeurCmp = 47.5K;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA8BCC;
+Reference = R209;
+ValeurCmp = 2.67K;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA8BEA;
+Reference = R210;
+ValeurCmp = 10M;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA8BDE;
+Reference = R211;
+ValeurCmp = 82.5K;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA9A21;
+Reference = R212;
+ValeurCmp = 10K;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA9A2C;
+Reference = R213;
+ValeurCmp = 10K;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA9C75;
+Reference = R214;
+ValeurCmp = 10K;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA9C80;
+Reference = R215;
+ValeurCmp = 15.5K;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA9EA8;
+Reference = R216;
+ValeurCmp = 10K;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA90EF;
+Reference = R217;
+ValeurCmp = 500R;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA9EB3;
+Reference = R218;
+ValeurCmp = 10K;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AAA3A3;
+Reference = R219;
+ValeurCmp = 6.2K;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AAA3B8;
+Reference = R220;
+ValeurCmp = 3.6K;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52A7BBAE;
+Reference = S101;
+ValeurCmp = RESET;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AAB863;
+Reference = S102;
+ValeurCmp = WRITEEN;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AAA430;
+Reference = S103;
+ValeurCmp = POWER;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA9CC1;
+Reference = TP201;
+ValeurCmp = RFTX;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA91DF;
+Reference = TP202;
+ValeurCmp = RF1;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA97AC;
+Reference = TP203;
+ValeurCmp = RF2;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA983B;
+Reference = TP204;
+ValeurCmp = RF3;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA993A;
+Reference = TP205;
+ValeurCmp = RF4;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA9A30;
+Reference = TP206;
+ValeurCmp = RFRX;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /52A7B4BE;
+Reference = U101;
+ValeurCmp = MOSFET-P;
+IdModule  = stm32:SOT95P237X112_123-3N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52A7B20D;
+Reference = U102;
+ValeurCmp = STM32-48PIN;
+IdModule  = stm32:QFP50P900X900X160-48N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA54D5;
+Reference = U103;
+ValeurCmp = AP6502;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AC88B9;
+Reference = U104;
+ValeurCmp = MOSFET-N;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /52ACA596;
+Reference = U105;
+ValeurCmp = MIC2288;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AA89AF/52AA8BC6;
+Reference = U201;
+ValeurCmp = TL084;
+IdModule  = ;
+EndCmp
+
+BeginCmp
+TimeStamp = /52A7B28C;
+Reference = X101;
+ValeurCmp = CRYSTAL;
+IdModule  = stm32:XTAL8045X200N;
+EndCmp
+
+EndListe

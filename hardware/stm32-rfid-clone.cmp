@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPcb (2013-12-12 BZR 4550)-product date = Sat 14 Dec 2013 12:06:37 PM EST
+Cmp-Mod V01 Created by CvPcb (2013-12-12 BZR 4550)-product date = Sat 14 Dec 2013 06:22:29 PM EST
 
 BeginCmp
 TimeStamp = /52A7C903;
@@ -200,14 +200,14 @@ BeginCmp
 TimeStamp = /52AA0433;
 Reference = D101;
 ValeurCmp = DIODESCH;
-IdModule  = ;
+IdModule  = stm32:DIOM5226X220N;
 EndCmp
 
 BeginCmp
 TimeStamp = /52AA0445;
 Reference = D102;
 ValeurCmp = DIODESCH;
-IdModule  = ;
+IdModule  = stm32:DIOM5226X220N;
 EndCmp
 
 BeginCmp
@@ -228,35 +228,35 @@ BeginCmp
 TimeStamp = /52AC8ACD;
 Reference = D105;
 ValeurCmp = DIODESCH;
-IdModule  = ;
+IdModule  = stm32:DIOM5226X220N;
 EndCmp
 
 BeginCmp
 TimeStamp = /52ACAA17;
 Reference = D106;
 ValeurCmp = DIODESCH;
-IdModule  = ;
+IdModule  = stm32:DIOM5226X220N;
 EndCmp
 
 BeginCmp
 TimeStamp = /52AA89AF/52AA8AF6;
 Reference = D201;
 ValeurCmp = DIODE;
-IdModule  = ;
+IdModule  = stm32:DIOM5226X220N;
 EndCmp
 
 BeginCmp
 TimeStamp = /52AA89AF/52AA8AF0;
 Reference = D202;
 ValeurCmp = DIODE;
-IdModule  = ;
+IdModule  = stm32:DIOM5226X220N;
 EndCmp
 
 BeginCmp
 TimeStamp = /52AA89AF/52AA8B44;
 Reference = D203;
 ValeurCmp = DIODE;
-IdModule  = ;
+IdModule  = stm32:DIOM5226X220N;
 EndCmp
 
 BeginCmp
@@ -624,17 +624,17 @@ IdModule  = stm32:RESC2012X100N;
 EndCmp
 
 BeginCmp
-TimeStamp = /52A7BBAE;
+TimeStamp = /52ACEC45;
 Reference = S101;
 ValeurCmp = RESET;
-IdModule  = ;
+IdModule  = stm32:CKCOMP-PTS525SM10SMTR;
 EndCmp
 
 BeginCmp
 TimeStamp = /52AAB863;
 Reference = S102;
 ValeurCmp = WRITEEN;
-IdModule  = ;
+IdModule  = stm32:CKCOMP-PTS525SM10SMTR;
 EndCmp
 
 BeginCmp
@@ -648,42 +648,42 @@ BeginCmp
 TimeStamp = /52AA89AF/52AA9CC1;
 Reference = TP201;
 ValeurCmp = RFTX;
-IdModule  = ;
+IdModule  = stm32:HDRV1W66P254_1X1_254X249X838P;
 EndCmp
 
 BeginCmp
 TimeStamp = /52AA89AF/52AA91DF;
 Reference = TP202;
 ValeurCmp = RF1;
-IdModule  = ;
+IdModule  = stm32:HDRV1W66P254_1X1_254X249X838P;
 EndCmp
 
 BeginCmp
 TimeStamp = /52AA89AF/52AA97AC;
 Reference = TP203;
 ValeurCmp = RF2;
-IdModule  = ;
+IdModule  = stm32:HDRV1W66P254_1X1_254X249X838P;
 EndCmp
 
 BeginCmp
 TimeStamp = /52AA89AF/52AA983B;
 Reference = TP204;
 ValeurCmp = RF3;
-IdModule  = ;
+IdModule  = stm32:HDRV1W66P254_1X1_254X249X838P;
 EndCmp
 
 BeginCmp
 TimeStamp = /52AA89AF/52AA993A;
 Reference = TP205;
 ValeurCmp = RF4;
-IdModule  = ;
+IdModule  = stm32:HDRV1W66P254_1X1_254X249X838P;
 EndCmp
 
 BeginCmp
 TimeStamp = /52AA89AF/52AA9A30;
 Reference = TP206;
 ValeurCmp = RFRX;
-IdModule  = ;
+IdModule  = stm32:HDRV1W66P254_1X1_254X249X838P;
 EndCmp
 
 BeginCmp
@@ -704,7 +704,7 @@ BeginCmp
 TimeStamp = /52AA54D5;
 Reference = U103;
 ValeurCmp = AP6502;
-IdModule  = ;
+IdModule  = stm32:SOIC127P600X150-9N;
 EndCmp
 
 BeginCmp

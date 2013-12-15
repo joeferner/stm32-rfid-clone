@@ -908,4 +908,15 @@ $EndComp
 Wire Wire Line
 	950  4000 950  4100
 Connection ~ 950  4100
+$Comp
+L R R?
+U 1 1 52ADF328
+P 4450 4850
+F 0 "R?" V 4395 4850 30  0000 C CNN
+F 1 "1M" V 4505 4850 30  0000 C CNN
+F 2 "" H 4450 4850 60  0000 C CNN
+F 3 "" H 4450 4850 60  0000 C CNN
+	1    4450 4850
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC

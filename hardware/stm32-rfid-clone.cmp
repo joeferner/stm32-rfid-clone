@@ -1,4 +1,11 @@
-Cmp-Mod V01 Created by CvPcb (2013-12-12 BZR 4550)-product date = Sat 14 Dec 2013 06:22:29 PM EST
+Cmp-Mod V01 Created by CvPcb (2013-12-12 BZR 4550)-product date = Wed 18 Dec 2013 07:55:14 PM EST
+
+BeginCmp
+TimeStamp = /52AFAE81;
+Reference = BT101;
+ValeurCmp = BATTERY;
+IdModule  = ;
+EndCmp
 
 BeginCmp
 TimeStamp = /52A7C903;
@@ -127,6 +134,20 @@ IdModule  = stm32:CAPC2012X100N;
 EndCmp
 
 BeginCmp
+TimeStamp = /52AFAD2C;
+Reference = C119;
+ValeurCmp = 18pF;
+IdModule  = stm32:CAPC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AFAD0B;
+Reference = C120;
+ValeurCmp = 18pF;
+IdModule  = stm32:CAPC2012X100N;
+EndCmp
+
+BeginCmp
 TimeStamp = /52AA89AF/52AA9035;
 Reference = C201;
 ValeurCmp = 100pF;
@@ -211,13 +232,6 @@ IdModule  = stm32:DIOM5226X220N;
 EndCmp
 
 BeginCmp
-TimeStamp = /52AAAD04;
-Reference = D103;
-ValeurCmp = READIND;
-IdModule  = ;
-EndCmp
-
-BeginCmp
 TimeStamp = /52AA98AC;
 Reference = D104;
 ValeurCmp = PWR;
@@ -270,14 +284,14 @@ BeginCmp
 TimeStamp = /52AA566E;
 Reference = L101;
 ValeurCmp = 20uH;
-IdModule  = ;
+IdModule  = stm32:IND_ASPI-8040S-680M-T;
 EndCmp
 
 BeginCmp
 TimeStamp = /52ACA9EE;
 Reference = L102;
 ValeurCmp = 20uH;
-IdModule  = ;
+IdModule  = stm32:IND_ASPI-8040S-680M-T;
 EndCmp
 
 BeginCmp
@@ -330,17 +344,24 @@ IdModule  = stm32:HDRV3W66P254_1X3_762X249X838P;
 EndCmp
 
 BeginCmp
-TimeStamp = /52AA89AF/52AA8B3B;
-Reference = P201;
-ValeurCmp = ANT;
+TimeStamp = /52B240EB;
+Reference = P104;
+ValeurCmp = READIND;
+IdModule  = stm32:HDRV3W66P254_1X3_762X249X838P;
+EndCmp
+
+BeginCmp
+TimeStamp = /52B24301;
+Reference = P105;
+ValeurCmp = SPEAKER;
 IdModule  = stm32:HDRV2W66P254_1X2_508X249X838P;
 EndCmp
 
 BeginCmp
-TimeStamp = /52AC9074;
-Reference = PIEZO101;
-ValeurCmp = PIEZO;
-IdModule  = ;
+TimeStamp = /52AA89AF/52AA8B3B;
+Reference = P201;
+ValeurCmp = ANT;
+IdModule  = stm32:HDRV2W66P254_1X2_508X249X838P;
 EndCmp
 
 BeginCmp
@@ -480,6 +501,20 @@ BeginCmp
 TimeStamp = /52ACAA5D;
 Reference = R117;
 ValeurCmp = 5K;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AFB81D;
+Reference = R118;
+ValeurCmp = 3.3K;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AFB812;
+Reference = R119;
+ValeurCmp = 6.8K;
 IdModule  = stm32:RESC2012X100N;
 EndCmp
 
@@ -624,6 +659,13 @@ IdModule  = stm32:RESC2012X100N;
 EndCmp
 
 BeginCmp
+TimeStamp = /52AA89AF/52ADF328;
+Reference = R221;
+ValeurCmp = 1M;
+IdModule  = stm32:RESC2012X100N;
+EndCmp
+
+BeginCmp
 TimeStamp = /52ACEC45;
 Reference = S101;
 ValeurCmp = RESET;
@@ -731,8 +773,15 @@ EndCmp
 BeginCmp
 TimeStamp = /52A7B28C;
 Reference = X101;
-ValeurCmp = CRYSTAL;
+ValeurCmp = 8MHz;
 IdModule  = stm32:XTAL8045X200N;
+EndCmp
+
+BeginCmp
+TimeStamp = /52AFAD00;
+Reference = X102;
+ValeurCmp = 32.768kHz;
+IdModule  = ;
 EndCmp
 
 EndListe

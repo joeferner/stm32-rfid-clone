@@ -1,7 +1,7 @@
 (export (version D)
   (design
     (source /home/jferner/dev/stm32-rfid-clone/hardware/stm32-rfid-clone.sch)
-    (date "Thu 19 Dec 2013 09:41:25 PM EST")
+    (date "Thu 19 Dec 2013 10:05:13 PM EST")
     (tool "eeschema (2013-12-12 BZR 4550)-product"))
   (components
     (comp (ref U102)
@@ -698,16 +698,6 @@
       (fields
         (field (name Reference) M)
         (field (name Value) MECH)))
-    (libpart (lib stm32-rfid-clone) (part MIC2288)
-      (fields
-        (field (name Reference) U)
-        (field (name Value) MIC2288))
-      (pins
-        (pin (num 1) (name SW) (type passive))
-        (pin (num 2) (name GND) (type passive))
-        (pin (num 3) (name FB) (type passive))
-        (pin (num 4) (name EN) (type passive))
-        (pin (num 5) (name VIN) (type passive))))
     (libpart (lib stm32-rfid-clone) (part MOSFET-N)
       (footprints
         (fp SOT95P237X112_123-3N))
@@ -726,6 +716,16 @@
         (field (name Value) MOSFET-P))
       (pins
         (pin (num 1) (name ~) (type passive))
+        (pin (num 2) (name ~) (type passive))
+        (pin (num 3) (name ~) (type passive))))
+    (libpart (lib stm32-rfid-clone) (part NPN)
+      (footprints
+        (fp SOT95P237X112_123-3N))
+      (fields
+        (field (name Reference) Q)
+        (field (name Value) NPN))
+      (pins
+        (pin (num 1) (name ~) (type input))
         (pin (num 2) (name ~) (type passive))
         (pin (num 3) (name ~) (type passive))))
     (libpart (lib stm32-rfid-clone) (part P02)
@@ -748,12 +748,14 @@
         (pin (num 2) (name ~) (type input))
         (pin (num 3) (name ~) (type input))))
     (libpart (lib stm32-rfid-clone) (part PNP)
+      (footprints
+        (fp SOT95P237X112_123-3N))
       (fields
         (field (name Reference) Q)
         (field (name Value) PNP))
       (pins
-        (pin (num 1) (name ~) (type passive))
-        (pin (num 2) (name ~) (type input))
+        (pin (num 1) (name ~) (type input))
+        (pin (num 2) (name ~) (type passive))
         (pin (num 3) (name ~) (type passive))))
     (libpart (lib stm32-rfid-clone) (part POT)
       (footprints
@@ -874,16 +876,18 @@
         (pin (num 3) (name D+) (type BiDi))
         (pin (num 5) (name GND) (type power_out))
         (pin (num 6) (name SHIELD) (type passive))))
-    (libpart (lib stm32-rfid-clone) (part NPN)
+    (libpart (lib stm32-rfid-clone) (part MIC2288)
       (footprints
-        (fp SOT95P237X112_123-3N))
+        (fp SOT95P280X100-5N))
       (fields
-        (field (name Reference) Q)
-        (field (name Value) NPN))
+        (field (name Reference) U)
+        (field (name Value) MIC2288))
       (pins
-        (pin (num 1) (name ~) (type input))
-        (pin (num 2) (name ~) (type passive))
-        (pin (num 3) (name ~) (type passive)))))
+        (pin (num 1) (name SW) (type passive))
+        (pin (num 2) (name GND) (type passive))
+        (pin (num 3) (name FB) (type passive))
+        (pin (num 4) (name EN) (type passive))
+        (pin (num 5) (name VIN) (type passive)))))
   (libraries
     (library (logical stm32-rfid-clone)
       (uri stm32-rfid-clone.lib)))
@@ -996,7 +1000,7 @@
       (node (ref U104) (pin 2))
       (node (ref R117) (pin 2))
       (node (ref U105) (pin 2))
-      (node (ref Q203) (pin 1))
+      (node (ref Q203) (pin 2))
       (node (ref P103) (pin 3))
       (node (ref R114) (pin 2))
       (node (ref R105) (pin 2))
@@ -1219,7 +1223,7 @@
     (net (code 76) (name "Net-(D202-Pad2)")
       (node (ref Q201) (pin 3))
       (node (ref D202) (pin 2))
-      (node (ref Q203) (pin 2)))
+      (node (ref Q203) (pin 1)))
     (net (code 77) (name "Net-(Q203-Pad3)")
       (node (ref Q203) (pin 3))
       (node (ref R204) (pin 2)))

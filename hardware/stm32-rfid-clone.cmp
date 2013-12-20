@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPcb (2013-12-12 BZR 4550)-product date = Thu 19 Dec 2013 09:41:32 PM EST
+Cmp-Mod V01 Created by CvPcb (2013-12-12 BZR 4550)-product date = Thu 19 Dec 2013 10:05:20 PM EST
 
 BeginCmp
 TimeStamp = /52AFAE81;
@@ -382,7 +382,7 @@ BeginCmp
 TimeStamp = /52AA89AF/52AA8B25;
 Reference = Q203;
 ValeurCmp = 2N2907;
-IdModule  = ;
+IdModule  = stm32:SOT95P237X112_123-3N;
 EndCmp
 
 BeginCmp
@@ -753,14 +753,14 @@ BeginCmp
 TimeStamp = /52AC88B9;
 Reference = U104;
 ValeurCmp = MOSFET-N;
-IdModule  = ;
+IdModule  = stm32:SOT95P237X112_123-3N;
 EndCmp
 
 BeginCmp
 TimeStamp = /52ACA596;
 Reference = U105;
 ValeurCmp = MIC2288;
-IdModule  = ;
+IdModule  = stm32:SOT95P280X100-5N;
 EndCmp
 
 BeginCmp

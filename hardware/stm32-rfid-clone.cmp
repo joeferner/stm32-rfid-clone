@@ -1,10 +1,10 @@
-Cmp-Mod V01 Created by CvPcb (2013-12-12 BZR 4550)-product date = Wed 18 Dec 2013 07:55:14 PM EST
+Cmp-Mod V01 Created by CvPcb (2013-12-12 BZR 4550)-product date = Thu 19 Dec 2013 09:41:32 PM EST
 
 BeginCmp
 TimeStamp = /52AFAE81;
 Reference = BT101;
 ValeurCmp = BATTERY;
-IdModule  = ;
+IdModule  = stm32:KEYSTONE-3000;
 EndCmp
 
 BeginCmp
@@ -150,8 +150,8 @@ EndCmp
 BeginCmp
 TimeStamp = /52AA89AF/52AA9035;
 Reference = C201;
-ValeurCmp = 100pF;
-IdModule  = ;
+ValeurCmp = 6.5-30pF;
+IdModule  = stm32:MURATA-TZC3;
 EndCmp
 
 BeginCmp
@@ -283,14 +283,14 @@ EndCmp
 BeginCmp
 TimeStamp = /52AA566E;
 Reference = L101;
-ValeurCmp = 20uH;
+ValeurCmp = 27uH;
 IdModule  = stm32:IND_ASPI-8040S-680M-T;
 EndCmp
 
 BeginCmp
 TimeStamp = /52ACA9EE;
 Reference = L102;
-ValeurCmp = 20uH;
+ValeurCmp = 27uH;
 IdModule  = stm32:IND_ASPI-8040S-680M-T;
 EndCmp
 
@@ -368,14 +368,14 @@ BeginCmp
 TimeStamp = /52AA89AF/52AA8AE2;
 Reference = Q201;
 ValeurCmp = 2N2222;
-IdModule  = ;
+IdModule  = stm32:SOT95P237X112_123-3N;
 EndCmp
 
 BeginCmp
 TimeStamp = /52AA89AF/52AA8B02;
 Reference = Q202;
 ValeurCmp = 2N2222;
-IdModule  = ;
+IdModule  = stm32:SOT95P237X112_123-3N;
 EndCmp
 
 BeginCmp

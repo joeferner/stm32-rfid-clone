@@ -11,8 +11,10 @@ libs/CVAR.lib
 libs/TP.lib
 libs/STM32-48PIN.lib
 libs/CRYSTAL.lib
+libs/CRYSTAL-14.lib
 libs/VREG_VOUTCENTER.lib
 libs/SPST.lib
+libs/SPST-4PIN.lib
 libs/SPDT.lib
 libs/P02.lib
 libs/P03.lib

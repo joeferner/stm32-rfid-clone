@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPcb (2013-12-12 BZR 4550)-product date = Thu 19 Dec 2013 11:01:53 PM EST
+Cmp-Mod V01 Created by CvPcb (2013-12-12 BZR 4550)-product date = Thu 19 Dec 2013 11:39:01 PM EST
 
 BeginCmp
 TimeStamp = /52AFAE81;
@@ -634,7 +634,7 @@ BeginCmp
 TimeStamp = /52AA89AF/52AA90EF;
 Reference = R217;
 ValeurCmp = 500R;
-IdModule  = ;
+IdModule  = stm32:COPAL-CT6EP;
 EndCmp
 
 BeginCmp
@@ -781,7 +781,7 @@ BeginCmp
 TimeStamp = /52AFAD00;
 Reference = X102;
 ValeurCmp = 32.768kHz;
-IdModule  = ;
+IdModule  = stm32:SOJ550P370X240-4N;
 EndCmp
 
 EndListe

@@ -1,7 +1,7 @@
 (export (version D)
   (design
     (source /home/jferner/dev/stm32-rfid-clone/hardware/stm32-rfid-clone.sch)
-    (date "Thu 19 Dec 2013 11:01:32 PM EST")
+    (date "Thu 19 Dec 2013 11:38:54 PM EST")
     (tool "eeschema (2013-12-12 BZR 4550)-product"))
   (components
     (comp (ref U102)
@@ -602,7 +602,8 @@
       (aliases
         (alias XTAL))
       (footprints
-        (fp XTAL8045X200N))
+        (fp XTAL8045X200N)
+        (fp SOJ550P370X240-4N))
       (fields
         (field (name Reference) X)
         (field (name Value) CRYSTAL))
@@ -671,6 +672,29 @@
       (pins
         (pin (num 1) (name A) (type passive))
         (pin (num 2) (name K) (type passive))))
+    (libpart (lib stm32-rfid-clone) (part LM324)
+      (aliases
+        (alias TL084))
+      (footprints
+        (fp SOIC127P600X175-14N))
+      (fields
+        (field (name Reference) U)
+        (field (name Value) LM324))
+      (pins
+        (pin (num 1) (name ~) (type passive))
+        (pin (num 2) (name -) (type passive))
+        (pin (num 3) (name +) (type passive))
+        (pin (num 4) (name V+) (type power_in))
+        (pin (num 5) (name +) (type passive))
+        (pin (num 6) (name -) (type passive))
+        (pin (num 7) (name ~) (type passive))
+        (pin (num 8) (name ~) (type passive))
+        (pin (num 9) (name -) (type passive))
+        (pin (num 10) (name +) (type passive))
+        (pin (num 11) (name V-) (type power_in))
+        (pin (num 12) (name +) (type passive))
+        (pin (num 13) (name -) (type passive))
+        (pin (num 14) (name ~) (type passive))))
     (libpart (lib stm32-rfid-clone) (part MECH)
       (footprints
         (fp MTGNP565H328Z565P))
@@ -750,15 +774,14 @@
         (pin (num 3) (name ~) (type passive))))
     (libpart (lib stm32-rfid-clone) (part POT)
       (footprints
-        (fp SM*)
-        (fp R?))
+        (fp COPAL-CT6EP))
       (fields
         (field (name Reference) R)
         (field (name Value) POT))
       (pins
         (pin (num 1) (name ~) (type passive))
-        (pin (num 2) (name ~) (type passive))
-        (pin (num 3) (name ~) (type input))))
+        (pin (num 2) (name ~) (type input))
+        (pin (num 3) (name ~) (type passive))))
     (libpart (lib stm32-rfid-clone) (part R)
       (footprints
         (fp RESC2012X100N))
@@ -776,6 +799,21 @@
         (pin (num 1) (name ~) (type passive))
         (pin (num 2) (name ~) (type passive))
         (pin (num 3) (name ~) (type passive))))
+    (libpart (lib stm32-rfid-clone) (part SPST)
+      (aliases
+        (alias switch)
+        (alias button))
+      (footprints
+        (fp CKCOMP-PTS525SM10SMTR)
+        (fp APEM-MJTP1129B))
+      (fields
+        (field (name Reference) S)
+        (field (name Value) SPST))
+      (pins
+        (pin (num 1) (name ~) (type passive))
+        (pin (num 2) (name ~) (type passive))
+        (pin (num 3) (name ~) (type passive))
+        (pin (num 4) (name ~) (type passive))))
     (libpart (lib stm32-rfid-clone) (part STM32-48PIN)
       (aliases
         (alias STM32F102C6))
@@ -852,45 +890,7 @@
         (pin (num 2) (name D-) (type BiDi))
         (pin (num 3) (name D+) (type BiDi))
         (pin (num 5) (name GND) (type power_out))
-        (pin (num 6) (name SHIELD) (type passive))))
-    (libpart (lib stm32-rfid-clone) (part LM324)
-      (aliases
-        (alias TL084))
-      (footprints
-        (fp SOIC127P600X175-14N))
-      (fields
-        (field (name Reference) U)
-        (field (name Value) LM324))
-      (pins
-        (pin (num 1) (name ~) (type passive))
-        (pin (num 2) (name -) (type passive))
-        (pin (num 3) (name +) (type passive))
-        (pin (num 4) (name V+) (type power_in))
-        (pin (num 5) (name +) (type passive))
-        (pin (num 6) (name -) (type passive))
-        (pin (num 7) (name ~) (type passive))
-        (pin (num 8) (name ~) (type passive))
-        (pin (num 9) (name -) (type passive))
-        (pin (num 10) (name +) (type passive))
-        (pin (num 11) (name V-) (type power_in))
-        (pin (num 12) (name +) (type passive))
-        (pin (num 13) (name -) (type passive))
-        (pin (num 14) (name ~) (type passive))))
-    (libpart (lib stm32-rfid-clone) (part SPST)
-      (aliases
-        (alias switch)
-        (alias button))
-      (footprints
-        (fp CKCOMP-PTS525SM10SMTR)
-        (fp APEM-MJTP1129B))
-      (fields
-        (field (name Reference) S)
-        (field (name Value) SPST))
-      (pins
-        (pin (num 1) (name ~) (type passive))
-        (pin (num 2) (name ~) (type passive))
-        (pin (num 3) (name ~) (type passive))
-        (pin (num 4) (name ~) (type passive)))))
+        (pin (num 6) (name SHIELD) (type passive)))))
   (libraries
     (library (logical stm32-rfid-clone)
       (uri stm32-rfid-clone.lib)))
@@ -1251,15 +1251,15 @@
       (node (ref C201) (pin 1))
       (node (ref P201) (pin 2))
       (node (ref C202) (pin 1)))
-    (net (code 83) (name "Net-(R217-Pad3)")
-      (node (ref R217) (pin 3))
+    (net (code 83) (name "Net-(R217-Pad2)")
+      (node (ref R217) (pin 2))
       (node (ref U201) (pin 3)))
-    (net (code 84) (name "Net-(R217-Pad2)")
+    (net (code 84) (name "Net-(R217-Pad1)")
       (node (ref R218) (pin 1))
-      (node (ref R217) (pin 2)))
+      (node (ref R217) (pin 1)))
     (net (code 85) (name "Net-(R216-Pad2)")
       (node (ref R216) (pin 2))
-      (node (ref R217) (pin 1)))
+      (node (ref R217) (pin 3)))
     (net (code 86) (name "Net-(R214-Pad1)")
       (node (ref R215) (pin 2))
       (node (ref R214) (pin 1))

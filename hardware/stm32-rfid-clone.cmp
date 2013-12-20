@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPcb (2013-12-12 BZR 4550)-product date = Thu 19 Dec 2013 11:39:01 PM EST
+Cmp-Mod V01 Created by CvPcb (2013-12-12 BZR 4550)-product date = Thu 19 Dec 2013 11:56:51 PM EST
 
 BeginCmp
 TimeStamp = /52AFAE81;
@@ -683,7 +683,7 @@ BeginCmp
 TimeStamp = /52AAA430;
 Reference = S103;
 ValeurCmp = POWER;
-IdModule  = ;
+IdModule  = stm32:CKCOMP-OS102011MA1QN1;
 EndCmp
 
 BeginCmp

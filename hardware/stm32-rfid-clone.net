@@ -1,7 +1,7 @@
 (export (version D)
   (design
     (source /home/jferner/dev/stm32-rfid-clone/hardware/stm32-rfid-clone.sch)
-    (date "Thu 19 Dec 2013 11:38:54 PM EST")
+    (date "Thu 19 Dec 2013 11:56:45 PM EST")
     (tool "eeschema (2013-12-12 BZR 4550)-product"))
   (components
     (comp (ref U102)
@@ -792,6 +792,8 @@
         (pin (num 1) (name ~) (type passive))
         (pin (num 2) (name ~) (type passive))))
     (libpart (lib stm32-rfid-clone) (part SPDT)
+      (footprints
+        (fp CKCOMP-OS102011MA1QN1))
       (fields
         (field (name Reference) S)
         (field (name Value) SPDT))

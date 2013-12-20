@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPcb (2013-12-12 BZR 4550)-product date = Thu 19 Dec 2013 10:05:20 PM EST
+Cmp-Mod V01 Created by CvPcb (2013-12-12 BZR 4550)-product date = Thu 19 Dec 2013 11:01:53 PM EST
 
 BeginCmp
 TimeStamp = /52AFAE81;
@@ -676,7 +676,7 @@ BeginCmp
 TimeStamp = /52AAB863;
 Reference = S102;
 ValeurCmp = WRITEEN;
-IdModule  = stm32:CKCOMP-PTS525SM10SMTR;
+IdModule  = stm32:APEM-MJTP1129B;
 EndCmp
 
 BeginCmp
@@ -767,7 +767,7 @@ BeginCmp
 TimeStamp = /52AA89AF/52AA8BC6;
 Reference = U201;
 ValeurCmp = TL084;
-IdModule  = ;
+IdModule  = stm32:SOIC127P600X175-14N;
 EndCmp
 
 BeginCmp

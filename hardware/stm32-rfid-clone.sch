@@ -62,12 +62,12 @@ $EndComp
 $Comp
 L C C109
 U 1 1 52A7B253
-P 2850 1300
-F 0 "C109" H 2875 1350 30  0000 L CNN
-F 1 "0.1uF" H 2875 1250 30  0000 L CNN
-F 2 "" H 2850 1300 60  0000 C CNN
-F 3 "" H 2850 1300 60  0000 C CNN
-	1    2850 1300
+P 7900 1300
+F 0 "C109" H 7925 1350 30  0000 L CNN
+F 1 "0.1uF" H 7925 1250 30  0000 L CNN
+F 2 "" H 7900 1300 60  0000 C CNN
+F 3 "" H 7900 1300 60  0000 C CNN
+	1    7900 1300
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -491,9 +491,6 @@ NoConn ~ 6150 3300
 NoConn ~ 6150 3400
 NoConn ~ 6150 3500
 NoConn ~ 6150 3700
-NoConn ~ 6150 3800
-NoConn ~ 6150 3900
-NoConn ~ 6150 4000
 NoConn ~ 6150 4100
 NoConn ~ 6150 4300
 Text Label 6600 3600 2    60   ~ 0
@@ -508,9 +505,9 @@ Text Label 1150 2400 0    60   ~ 0
 USBDIS
 Text Label 6600 2600 2    60   ~ 0
 USBDIS
-Text Label 6600 1200 2    60   ~ 0
+Text Label 6600 3800 2    60   ~ 0
 LEDGRN
-Text Label 6600 1300 2    60   ~ 0
+Text Label 6600 3900 2    60   ~ 0
 LEDRED
 $Comp
 L R R105
@@ -975,7 +972,7 @@ F 3 "" H 10750 4250 60  0000 C CNN
 	1    10750 4250
 	1    0    0    -1  
 $EndComp
-Text Label 6600 1400 2    60   ~ 0
+Text Label 6600 4000 2    60   ~ 0
 BEEP
 $Comp
 L MOSFET-N U104
@@ -1257,13 +1254,6 @@ Connection ~ 2350 1100
 Wire Wire Line
 	2600 1200 2600 1100
 Connection ~ 2600 1100
-Wire Wire Line
-	2850 1200 2850 1100
-Connection ~ 2850 1100
-Wire Wire Line
-	1900 1500 2850 1500
-Wire Wire Line
-	2850 1500 2850 1400
 Connection ~ 2100 1500
 Wire Wire Line
 	2600 1400 2600 1500
@@ -1417,10 +1407,6 @@ Wire Wire Line
 Wire Wire Line
 	6600 2600 6150 2600
 Wire Wire Line
-	6150 1200 6600 1200
-Wire Wire Line
-	6150 1300 6600 1300
-Wire Wire Line
 	3100 4250 3100 4600
 Wire Wire Line
 	3350 3800 3100 3800
@@ -1550,8 +1536,6 @@ Wire Wire Line
 	10750 4250 10750 4350
 Connection ~ 10750 4350
 Wire Wire Line
-	6150 1400 6600 1400
-Wire Wire Line
 	6100 5900 5700 5900
 Wire Wire Line
 	6300 6100 6300 6200
@@ -1649,9 +1633,7 @@ Wire Wire Line
 	3350 1500 3050 1500
 Text Label 3050 1500 0    60   ~ 0
 VBAT
-Wire Wire Line
-	6150 3200 6600 3200
-Text Label 6600 3200 2    60   ~ 0
+Text Label 6600 1400 2    60   ~ 0
 USBDET
 $Comp
 L R R119
@@ -1728,7 +1710,7 @@ Wire Wire Line
 Wire Wire Line
 	7500 1000 7500 900 
 Wire Wire Line
-	7500 900  7200 900 
+	7200 900  7900 900 
 Text Label 7200 900  0    60   ~ 0
 VBAT
 $Comp
@@ -1808,4 +1790,37 @@ F 3 "" H 3000 1950 60  0000 C CNN
 	1    3000 1950
 	1    0    0    -1  
 $EndComp
+Wire Wire Line
+	2600 1500 1900 1500
+Wire Wire Line
+	7900 900  7900 1200
+Connection ~ 7500 900 
+$Comp
+L GNDPWR #PWR045
+U 1 1 52BD071B
+P 7900 1700
+F 0 "#PWR045" H 7900 1700 30  0001 C CNN
+F 1 "GNDPWR" H 7900 1630 30  0001 C CNN
+F 2 "" H 7900 1700 60  0000 C CNN
+F 3 "" H 7900 1700 60  0000 C CNN
+	1    7900 1700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7900 1400 7900 1700
+Text Label 2850 3000 0    60   ~ 0
+USBDP
+Text Label 2850 3200 0    60   ~ 0
+USBDM
+NoConn ~ 6150 1200
+NoConn ~ 6150 1300
+Wire Wire Line
+	6150 3800 6600 3800
+Wire Wire Line
+	6150 3900 6600 3900
+Wire Wire Line
+	6150 4000 6600 4000
+NoConn ~ 6150 3200
+Wire Wire Line
+	6150 1400 6600 1400
 $EndSCHEMATC

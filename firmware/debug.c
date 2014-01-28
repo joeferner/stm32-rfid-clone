@@ -1,6 +1,7 @@
 
 #include "platform_config.h"
 #include "debug.h"
+#include "usb.h"
 #include <stm32f10x_usart.h>
 #include <stm32f10x_misc.h>
 
@@ -89,6 +90,10 @@ void debug_write(const char* str) {
 void debug_write_ch(char ch) {
   USART_SendData(DEBUG_USART, ch);
   while (USART_GetFlagStatus(DEBUG_USART, USART_FLAG_TXE) == RESET);
+
+  if (g_usb_initialized) {
+    usb_write((const uint8_t *) &ch, 1);
+  }
 }
 
 void debug_write_u8(uint8_t val, uint8_t base) {

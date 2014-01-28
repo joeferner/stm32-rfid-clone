@@ -14,12 +14,14 @@
 #define USB_TX_BUFFER_SIZE 100
 uint8_t usb_tx_buffer[USB_TX_BUFFER_SIZE];
 ring_buffer_u8 usb_tx_ring_buffer;
+uint8_t g_usb_initialized = 0;
 
 void usb_setup(void) {
   GPIO_InitTypeDef gpioInitStructure;
   EXTI_InitTypeDef extiInitStructure;
   NVIC_InitTypeDef nvicInitStructure;
 
+  g_usb_initialized = 0;
   debug_write_line("?BEGIN usb_setup");
 
   ring_buffer_u8_init(&usb_tx_ring_buffer, usb_tx_buffer, USB_TX_BUFFER_SIZE);
@@ -35,6 +37,13 @@ void usb_setup(void) {
   gpioInitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
   gpioInitStructure.GPIO_Speed = GPIO_Speed_2MHz;
   GPIO_Init(USB_DISCONNECT_PORT, &gpioInitStructure);
+
+  /* USB_DETECT input */
+  RCC_APB2PeriphClockCmd(USB_DETECT_RCC, ENABLE);
+  gpioInitStructure.GPIO_Pin = USB_DETECT_PIN;
+  gpioInitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+  gpioInitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+  GPIO_Init(USB_DETECT_PORT, &gpioInitStructure);
 
   /* Configure the EXTI line 18 connected internally to the USB IP */
   EXTI_ClearITPendingBit(EXTI_Line18);
@@ -65,6 +74,12 @@ void usb_setup(void) {
   delay_ms(100); // TODO remove?
 
   debug_write_line("?END usb_setup");
+  
+  g_usb_initialized = 1;
+}
+
+int usb_detect() {
+  return GPIO_ReadInputDataBit(USB_DETECT_PORT, USB_DETECT_PIN);
 }
 
 /* !!! Interrupt handler - Don't change this function name !!! */

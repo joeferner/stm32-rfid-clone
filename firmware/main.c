@@ -86,7 +86,9 @@ void setup() {
 
   debug_setup();
 
-  //usb_setup();
+  if (usb_detect()) {
+    usb_setup();
+  }
 
   //delay_ms(1000); // !!!! IMPORTANT: Keep this line in here. If we have a JTAG issue we need this time to get in before JTAG is disabled.
   //disable_jtag();
@@ -99,7 +101,6 @@ void setup() {
   rf_tx_on();
 
   debug_led_set(0);
-
 
   debug_write_line("?END setup");
 }

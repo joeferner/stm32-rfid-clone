@@ -75,8 +75,10 @@ extern "C" {
 
   extern __IO uint32_t g_usb_deviceState; /* USB device status */
   extern __IO bool g_usb_suspendEnabled; /* true when suspend is possible */
+  extern uint8_t g_usb_initialized;
 
   void usb_setup();
+  int usb_detect();
   extern void usb_on_rx(uint8_t* data, uint16_t len);
   void usb_write(const uint8_t* data, uint16_t len);
 

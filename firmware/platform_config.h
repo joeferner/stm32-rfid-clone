@@ -15,6 +15,10 @@ extern "C" {
 #define USB_DISCONNECT_PORT    GPIOB
 #define USB_DISCONNECT_PIN     GPIO_Pin_0
 
+#define USB_DETECT_RCC         RCC_APB2Periph_GPIOA
+#define USB_DETECT_PORT        GPIOA
+#define USB_DETECT_PIN         GPIO_Pin_3
+
 #define DEBUG_LED_RCC          RCC_APB2Periph_GPIOA
 #define DEBUG_LED_PORT         GPIOA
 #define DEBUG_LED_PIN          GPIO_Pin_0

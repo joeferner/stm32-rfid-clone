@@ -10,6 +10,7 @@
 #include "usb.h"
 #include "ring_buffer.h"
 #include "platform_config.h"
+#include "em4x05.h"
 
 #define RF_TX_CARRIER_FREQ       125000
 #define RF_TX_PWM_PERIOD         (SystemCoreClock / RF_TX_CARRIER_FREQ)
@@ -39,6 +40,8 @@ uint16_t rf_rx_get(int i);
 void rf_rx_process(int i);
 void rf_rx_reset_read();
 void rf_rx_process_read_buffer();
+void writeen_setup();
+int writeen_read();
 
 #define INPUT_BUFFER_SIZE 100
 uint8_t usbInputBuffer[INPUT_BUFFER_SIZE];
@@ -71,6 +74,8 @@ int main(void) {
 
   rf_rx_enable();
 
+  delay_ms(1000);
+
   while (1) {
     loop();
   }
@@ -86,14 +91,16 @@ void setup() {
 
   debug_setup();
 
-  if (usb_detect()) {
-    usb_setup();
-  }
+  //if (usb_detect()) {
+  //  usb_setup();
+  //}
 
   //delay_ms(1000); // !!!! IMPORTANT: Keep this line in here. If we have a JTAG issue we need this time to get in before JTAG is disabled.
   //disable_jtag();
 
   time_setup();
+
+  writeen_setup();
 
   rf_tx_setup();
   rf_rx_setup();
@@ -107,6 +114,18 @@ void setup() {
 
 void loop() {
   rf_rx_process_capture_buffer();
+
+  if (writeen_read()) {
+    delay_ms(1000);
+    //em4x05_read(EM4X05_ADDR_CHIP_TYPE);
+    //em4x05_read(EM4X05_ADDR_UID);
+    em4x05_config cfg;
+    cfg.dataRate = EM4X05_DATA_RATE_32;
+    cfg.encoder = EM4X05_ENCODER_MANCHESTER;
+    cfg.delay = EM4X05_DELAY_ON_NONE;
+    cfg.lastDefaultReadWord = EM4X05_LWR_6;
+    em4x05_write_config(&cfg);
+  }
 
   //  delay_ms(500);
   //  status_led_off();
@@ -129,6 +148,19 @@ void assert_failed(uint8_t* file, uint32_t line) {
 void disable_jtag() {
   debug_write_line("?disable_jtag");
   GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable, ENABLE);
+}
+
+void writeen_setup() {
+  GPIO_InitTypeDef gpioInitStructure;
+
+  RCC_APB2PeriphClockCmd(WRITEEN_RCC, ENABLE);
+  gpioInitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+  gpioInitStructure.GPIO_Pin = WRITEEN_PIN;
+  GPIO_Init(WRITEEN_PORT, &gpioInitStructure);
+}
+
+int writeen_read() {
+  return GPIO_ReadInputDataBit(WRITEEN_PORT, WRITEEN_PIN);
 }
 
 void rf_tx_setup() {
@@ -167,15 +199,18 @@ void rf_tx_setup() {
   TIM_SelectOnePulseMode(RF_TX_TIMER, TIM_OPMode_Repetitive);
   TIM_ARRPreloadConfig(RF_TX_TIMER, ENABLE);
   TIM_Cmd(RF_TX_TIMER, ENABLE);
+  RF_TX_TIMER_CH_SetCompare(RF_TX_TIMER, RF_TX_PWM_PERIOD / 2);
 
   debug_write_line("?END rf_tx_setup");
 }
 
 void rf_tx_on() {
+  TIM_Cmd(RF_TX_TIMER, ENABLE);
   RF_TX_TIMER_CH_SetCompare(RF_TX_TIMER, RF_TX_PWM_PERIOD / 2);
 }
 
 void rf_tx_off() {
+  TIM_Cmd(RF_TX_TIMER, DISABLE);
   RF_TX_TIMER_CH_SetCompare(RF_TX_TIMER, 0);
 }
 

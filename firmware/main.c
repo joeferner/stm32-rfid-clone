@@ -11,6 +11,7 @@
 #include "ring_buffer.h"
 #include "platform_config.h"
 #include "em4x05.h"
+#include "sump.h"
 
 #define RF_TX_CARRIER_FREQ       125000
 #define RF_TX_PWM_PERIOD         (SystemCoreClock / RF_TX_CARRIER_FREQ)
@@ -43,9 +44,11 @@ void rf_rx_process_read_buffer();
 void writeen_setup();
 int writeen_read();
 
+#ifndef SUMP_H
 #define INPUT_BUFFER_SIZE 100
 uint8_t usbInputBuffer[INPUT_BUFFER_SIZE];
 ring_buffer_u8 usbInputRingBuffer;
+#endif
 
 #define RX_RX_CAPTURE_BUFFER_HIGH 0x01
 #define RX_RX_CAPTURE_BUFFER_LOW  0x02
@@ -87,16 +90,20 @@ void setup() {
   // 2 bit for pre-emption priority, 2 bits for subpriority
   NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 
+#ifndef SUMP_H
   ring_buffer_u8_init(&usbInputRingBuffer, usbInputBuffer, INPUT_BUFFER_SIZE);
+#endif
 
   debug_setup();
 
-  //if (usb_detect()) {
-  //  usb_setup();
-  //}
+  if (usb_detect()) {
+    usb_setup();
+  }
 
   //delay_ms(1000); // !!!! IMPORTANT: Keep this line in here. If we have a JTAG issue we need this time to get in before JTAG is disabled.
   //disable_jtag();
+
+  sump_setup();
 
   time_setup();
 
@@ -114,17 +121,24 @@ void setup() {
 
 void loop() {
   rf_rx_process_capture_buffer();
+  sump_loop();
 
   if (writeen_read()) {
-    delay_ms(1000);
-    //em4x05_read(EM4X05_ADDR_CHIP_TYPE);
+    //delay_ms(1000);
+    em4x05_read(EM4X05_ADDR_CHIP_TYPE);
     //em4x05_read(EM4X05_ADDR_UID);
     em4x05_config cfg;
+    em4x05_config_init(&cfg);
     cfg.dataRate = EM4X05_DATA_RATE_32;
     cfg.encoder = EM4X05_ENCODER_MANCHESTER;
     cfg.delay = EM4X05_DELAY_ON_NONE;
     cfg.lastDefaultReadWord = EM4X05_LWR_6;
-    em4x05_write_config(&cfg);
+    cfg.readLogin = EM4X05_READ_LOGIN_OFF;
+    cfg.writeLogin = EM4X05_WRITE_LOGIN_OFF;
+    cfg.allowDisable = EM4X05_ALLOW_DISABLE_OFF;
+    cfg.readerTalkFirst = EM4X05_RTF_OFF;
+    cfg.pigeonMode = EM4X05_PIGEON_MODE_OFF;
+    //em4x05_write_config(&cfg);
   }
 
   //  delay_ms(500);
@@ -200,6 +214,15 @@ void rf_tx_setup() {
   TIM_ARRPreloadConfig(RF_TX_TIMER, ENABLE);
   TIM_Cmd(RF_TX_TIMER, ENABLE);
   RF_TX_TIMER_CH_SetCompare(RF_TX_TIMER, RF_TX_PWM_PERIOD / 2);
+
+  NVIC_InitTypeDef nvicStructure;
+  nvicStructure.NVIC_IRQChannel = TIM2_IRQn;
+  nvicStructure.NVIC_IRQChannelPreemptionPriority = 0;
+  nvicStructure.NVIC_IRQChannelSubPriority = 1;
+  nvicStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&nvicStructure);
+
+  TIM_ITConfig(RF_TX_TIMER, TIM_IT_Update, ENABLE);
 
   debug_write_line("?END rf_tx_setup");
 }
@@ -277,6 +300,17 @@ void on_dma1_ch2_irq() {
       rfRxCaptureBufferReady |= RX_RX_CAPTURE_BUFFER_HIGH;
     } else {
       rfRxCaptureBufferReady |= RX_RX_CAPTURE_BUFFER_LOW;
+    }
+  }
+}
+
+void on_tim2_irq() {
+  if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET) {
+    TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+    if (g_sump_enabled) {
+      uint8_t data = GPIO_ReadInputDataBit(RF_TX_PORT, RF_TX_PIN) ? 0x01 : 0x00;
+      data |= writeen_read() ? 0x02 : 0x00;
+      sump_tx(data);
     }
   }
 }
@@ -419,6 +453,8 @@ void rf_rx_disable() {
   TIM_Cmd(TIM1, DISABLE);
 }
 
+#ifndef SUMP_H
+
 void usb_on_rx(uint8_t* data, uint16_t len) {
 #define MAX_LINE_LENGTH 100
   char line[MAX_LINE_LENGTH];
@@ -428,3 +464,4 @@ void usb_on_rx(uint8_t* data, uint16_t len) {
     debug_write_line(line);
   }
 }
+#endif

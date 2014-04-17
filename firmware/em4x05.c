@@ -25,6 +25,7 @@ void em4x05_read(uint8_t addr) {
   debug_write_line("");
 
   _em4x05_tx_first_stop();
+  _em4x05_tx(0);
   _em4x05_tx_command(COMMAND_READ);
   _em4x05_tx_addr(addr);
 }
@@ -105,6 +106,7 @@ void em4x05_write(uint8_t addr, uint32_t value) {
   _em4x05_write_uint32_calc(value, bits);
 
   _em4x05_tx_first_stop();
+  _em4x05_tx(0);
   _em4x05_tx_command(COMMAND_WRITE);
   _em4x05_tx_addr(addr);
   for (i = 0; i < 45; i++) {

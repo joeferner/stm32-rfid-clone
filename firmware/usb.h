@@ -81,6 +81,8 @@ extern "C" {
   int usb_detect();
   extern void usb_on_rx(uint8_t* data, uint16_t len);
   void usb_write(const uint8_t* data, uint16_t len);
+  void usb_write_str(const char* data);
+  void usb_write_u8(uint8_t data);
 
   void USB_Istr(void);
 

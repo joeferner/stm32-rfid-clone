@@ -74,7 +74,7 @@ void usb_setup(void) {
   delay_ms(100); // TODO remove?
 
   debug_write_line("?END usb_setup");
-  
+
   g_usb_initialized = 1;
 }
 
@@ -94,6 +94,10 @@ void USBWakeUp_IRQHandler(void) {
 
 void usb_write(const uint8_t* data, uint16_t len) {
   ring_buffer_u8_write(&usb_tx_ring_buffer, data, len);
+}
+
+void usb_write_u8(uint8_t data) {
+  ring_buffer_u8_write_byte(&usb_tx_ring_buffer, data);
 }
 
 /**

@@ -13,6 +13,10 @@ void ring_buffer_u8_init(ring_buffer_u8* ring, uint8_t* storage, uint16_t size) 
   ring->available = 0;
 }
 
+uint16_t ring_buffer_u8_available(ring_buffer_u8* ring) {
+  return ring->available;
+}
+
 uint8_t ring_buffer_u8_read_byte(ring_buffer_u8* ring) {
   if (ring->available == 0) {
     return 0;
@@ -69,6 +73,10 @@ uint16_t ring_buffer_u8_readline(ring_buffer_u8* ring, char* buffer, uint16_t si
   }
   buffer[0] = '\0';
   return 0;
+}
+
+uint8_t ring_buffer_u8_peek(ring_buffer_u8* ring) {
+  return ring_buffer_u8_peekn(ring, 0);
 }
 
 uint8_t ring_buffer_u8_peekn(ring_buffer_u8* ring, uint16_t i) {

@@ -91,9 +91,10 @@ void debug_write_ch(char ch) {
   USART_SendData(DEBUG_USART, ch);
   while (USART_GetFlagStatus(DEBUG_USART, USART_FLAG_TXE) == RESET);
 
-  if (g_usb_initialized) {
-    usb_write((const uint8_t *) &ch, 1);
-  }
+  // uncomment to get debug output
+  //if (g_usb_initialized) {
+  //  usb_write((const uint8_t *) &ch, 1);
+  //}
 }
 
 void debug_write_u8(uint8_t val, uint8_t base) {

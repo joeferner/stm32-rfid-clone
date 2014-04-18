@@ -6,6 +6,10 @@
 #ifdef	__cplusplus
 extern "C" {
 #endif
+  
+#define SUMP_SAMPLE_MEMORY    1024
+#define SUMP_SAMPLE_RATE      125000
+#define SUMP_NUMBER_OF_PROBES 2
 
   typedef struct {
     uint16_t delay;
@@ -35,6 +39,7 @@ extern "C" {
   uint16_t g_sump_read_count;
   uint16_t g_sump_delay_count;
   sump_flags g_sump_flags;
+  int32_t g_sump_tx_left;
 
   void sump_setup();
   void sump_loop();

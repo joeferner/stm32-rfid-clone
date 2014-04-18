@@ -2,6 +2,7 @@
 #include "sump.h"
 #include "ring_buffer.h"
 #include "usb.h"
+#include "debug.h"
 
 #define SUMP_RESET                0x00
 #define SUMP_ARM                  0x01
@@ -45,13 +46,14 @@ void sump_loop() {
         break;
       case SUMP_QUERY:
         ring_buffer_u8_read_byte(&usbInputRingBuffer);
-        sump_tx('1');
-        sump_tx('A');
-        sump_tx('L');
-        sump_tx('S');
+        usb_write_u8('1');
+        usb_write_u8('A');
+        usb_write_u8('L');
+        usb_write_u8('S');
         break;
       case SUMP_ARM:
         ring_buffer_u8_read_byte(&usbInputRingBuffer);
+        g_sump_tx_left = 100000;
         g_sump_enabled = 1;
         break;
       case SUMP_TRIGGER_MASK:
@@ -103,38 +105,72 @@ void sump_loop() {
         }
         break;
       case SUMP_GET_METADATA:
+        ring_buffer_u8_read_byte(&usbInputRingBuffer);
+
         // device name
-        sump_tx(0x01);
-        sump_tx('s');
-        sump_tx('t');
-        sump_tx('m');
-        sump_tx('3');
-        sump_tx('2');
-        sump_tx(0x00);
+        usb_write_u8(0x01);
+        usb_write_u8('s');
+        usb_write_u8('t');
+        usb_write_u8('m');
+        usb_write_u8('3');
+        usb_write_u8('2');
+        usb_write_u8(0x00);
 
         // version
-        sump_tx(0x02);
-        sump_tx('0');
-        sump_tx('.');
-        sump_tx('1');
-        sump_tx(0x00);
+        usb_write_u8(0x02);
+        usb_write_u8('0');
+        usb_write_u8('.');
+        usb_write_u8('1');
+        usb_write_u8(0x00);
+
+        // sample memory
+        usb_write_u8(0x21);
+        usb_write_u8((SUMP_SAMPLE_MEMORY >> 24) & 0xff);
+        usb_write_u8((SUMP_SAMPLE_MEMORY >> 16) & 0xff);
+        usb_write_u8((SUMP_SAMPLE_MEMORY >> 8) & 0xff);
+        usb_write_u8((SUMP_SAMPLE_MEMORY >> 0) & 0xff);
+
+        // sample rate
+        usb_write_u8(0x23);
+        usb_write_u8((SUMP_SAMPLE_RATE >> 24) & 0xff);
+        usb_write_u8((SUMP_SAMPLE_RATE >> 16) & 0xff);
+        usb_write_u8((SUMP_SAMPLE_RATE >> 8) & 0xff);
+        usb_write_u8((SUMP_SAMPLE_RATE >> 0) & 0xff);
+
+        // number of probes
+        usb_write_u8(0x40);
+        usb_write_u8(SUMP_NUMBER_OF_PROBES);
 
         // protocol vertex 2
-        sump_tx(0x41);
-        sump_tx(0x02);
+        usb_write_u8(0x41);
+        usb_write_u8(0x02);
 
         // end of message
-        sump_tx(0x00);
+        usb_write_u8(0x00);
         break;
       case SUMP_SELF_TEST:
+        ring_buffer_u8_read_byte(&usbInputRingBuffer);
         // ignore
+        break;
+
+      default:
+        ring_buffer_u8_read_byte(&usbInputRingBuffer);
+        debug_write("SUMP: Invalid command 0x");
+        debug_write_u8(d, 16);
+        debug_write_line("");
         break;
     }
   }
 }
 
 void sump_tx(uint8_t data) {
-  usb_write_u8(data);
+  if (g_sump_enabled) {
+    usb_write_u8(data);
+    g_sump_tx_left--;
+    if (g_sump_tx_left <= 0) {
+      g_sump_enabled = 0;
+    }
+  }
 }
 
 uint8_t _sump_get_command(uint8_t *cmd) {

@@ -7,9 +7,9 @@
 extern "C" {
 #endif
   
-#define SUMP_SAMPLE_MEMORY    102400
-#define SUMP_SAMPLE_RATE      125000
-#define SUMP_NUMBER_OF_PROBES 2
+#define SUMP_SAMPLE_MEMORY    1024
+#define SUMP_SAMPLE_RATE      4000000
+#define SUMP_NUMBER_OF_PROBES 8
 
   typedef struct {
     uint16_t delay;
@@ -43,6 +43,7 @@ extern "C" {
 
   void sump_setup();
   void sump_loop();
+  void sump_trigger();
   void sump_tx(uint8_t data);
 
 

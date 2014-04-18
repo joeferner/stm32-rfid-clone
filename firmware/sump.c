@@ -29,13 +29,15 @@
 #define SUMP_SET_FLAGS            0x82
 
 #define INPUT_BUFFER_SIZE 100
-uint8_t usbInputBuffer[INPUT_BUFFER_SIZE];
-ring_buffer_u8 usbInputRingBuffer;
+uint8_t _g_sump_usbInputBuffer[INPUT_BUFFER_SIZE];
+ring_buffer_u8 _g_sump_usbInputRingBuffer;
+
+uint8_t _g_sump_triggered;
 
 uint8_t _sump_get_command(uint8_t *cmd);
 
 void sump_setup() {
-  ring_buffer_u8_init(&usbInputRingBuffer, usbInputBuffer, INPUT_BUFFER_SIZE);
+  ring_buffer_u8_init(&_g_sump_usbInputRingBuffer, _g_sump_usbInputBuffer, INPUT_BUFFER_SIZE);
 
   int ch;
   for (ch = 0; ch < 4; ch++) {
@@ -58,15 +60,15 @@ void sump_setup() {
 void sump_loop() {
   uint8_t cmdBytes[5];
 
-  while (ring_buffer_u8_available(&usbInputRingBuffer) > 0) {
-    uint8_t d = ring_buffer_u8_peek(&usbInputRingBuffer);
+  while (ring_buffer_u8_available(&_g_sump_usbInputRingBuffer) > 0) {
+    uint8_t d = ring_buffer_u8_peek(&_g_sump_usbInputRingBuffer);
     switch (d) {
       case SUMP_RESET:
-        ring_buffer_u8_read_byte(&usbInputRingBuffer);
+        ring_buffer_u8_read_byte(&_g_sump_usbInputRingBuffer);
         // do nothing
         break;
       case SUMP_QUERY:
-        ring_buffer_u8_read_byte(&usbInputRingBuffer);
+        ring_buffer_u8_read_byte(&_g_sump_usbInputRingBuffer);
         usb_write_u8('1');
         usb_write_u8('A');
         usb_write_u8('L');
@@ -74,8 +76,9 @@ void sump_loop() {
         break;
       case SUMP_ARM:
         debug_write_line("SUMP: arm");
-        ring_buffer_u8_read_byte(&usbInputRingBuffer);
+        ring_buffer_u8_read_byte(&_g_sump_usbInputRingBuffer);
         g_sump_enabled = 1;
+        _g_sump_triggered = 0;
         break;
       case SUMP_TRIGGER_MASK_CH0:
         _sump_get_command(g_sump_trigger[0]);
@@ -147,7 +150,7 @@ void sump_loop() {
           g_sump_delay_count = g_sump_delay_count << 8;
           g_sump_delay_count |= cmdBytes[2];
 
-          g_sump_tx_left = 4 * (g_sump_read_count + 1);
+          g_sump_tx_left = 20 * (g_sump_read_count + 1);
           debug_write("SUMP: read count: ");
           debug_write_u32(g_sump_tx_left, 10);
           debug_write_line("");
@@ -167,7 +170,7 @@ void sump_loop() {
         }
         break;
       case SUMP_GET_METADATA:
-        ring_buffer_u8_read_byte(&usbInputRingBuffer);
+        ring_buffer_u8_read_byte(&_g_sump_usbInputRingBuffer);
 
         // device name
         usb_write_u8(0x01);
@@ -211,12 +214,12 @@ void sump_loop() {
         usb_write_u8(0x00);
         break;
       case SUMP_SELF_TEST:
-        ring_buffer_u8_read_byte(&usbInputRingBuffer);
+        ring_buffer_u8_read_byte(&_g_sump_usbInputRingBuffer);
         // ignore
         break;
 
       default:
-        ring_buffer_u8_read_byte(&usbInputRingBuffer);
+        ring_buffer_u8_read_byte(&_g_sump_usbInputRingBuffer);
         debug_write("SUMP: Invalid command 0x");
         debug_write_u8(d, 16);
         debug_write_line("");
@@ -225,12 +228,19 @@ void sump_loop() {
   }
 }
 
+void sump_trigger() {
+  _g_sump_triggered = 1;
+}
+
+uint8_t last = 0x00;
+
 void sump_tx(uint8_t data) {
-  if (g_sump_enabled) {
+  if (g_sump_enabled && _g_sump_triggered) {
     if (usb_write_free() < 1) {
       return;
     }
-    usb_write_u8(data);
+    last = ((last ^ 0xff) & 0xf8) | (data & 0x07);
+    usb_write_u8(last);
     g_sump_tx_left--;
     if (g_sump_tx_left <= 0) {
       g_sump_enabled = 0;
@@ -240,17 +250,17 @@ void sump_tx(uint8_t data) {
 }
 
 uint8_t _sump_get_command(uint8_t *cmd) {
-  if (ring_buffer_u8_available(&usbInputRingBuffer) < 5) {
+  if (ring_buffer_u8_available(&_g_sump_usbInputRingBuffer) < 5) {
     return 0;
   }
-  ring_buffer_u8_read_byte(&usbInputRingBuffer); // skip command byte
-  cmd[0] = ring_buffer_u8_read_byte(&usbInputRingBuffer);
-  cmd[1] = ring_buffer_u8_read_byte(&usbInputRingBuffer);
-  cmd[2] = ring_buffer_u8_read_byte(&usbInputRingBuffer);
-  cmd[3] = ring_buffer_u8_read_byte(&usbInputRingBuffer);
+  ring_buffer_u8_read_byte(&_g_sump_usbInputRingBuffer); // skip command byte
+  cmd[0] = ring_buffer_u8_read_byte(&_g_sump_usbInputRingBuffer);
+  cmd[1] = ring_buffer_u8_read_byte(&_g_sump_usbInputRingBuffer);
+  cmd[2] = ring_buffer_u8_read_byte(&_g_sump_usbInputRingBuffer);
+  cmd[3] = ring_buffer_u8_read_byte(&_g_sump_usbInputRingBuffer);
   return 1;
 }
 
 void usb_on_rx(uint8_t* data, uint16_t len) {
-  ring_buffer_u8_write(&usbInputRingBuffer, data, len);
+  ring_buffer_u8_write(&_g_sump_usbInputRingBuffer, data, len);
 }

@@ -46,8 +46,8 @@ int writeen_read();
 
 #ifndef SUMP_H
 #define INPUT_BUFFER_SIZE 100
-uint8_t usbInputBuffer[INPUT_BUFFER_SIZE];
-ring_buffer_u8 usbInputRingBuffer;
+uint8_t _g_sump_usbInputBuffer[INPUT_BUFFER_SIZE];
+ring_buffer_u8 _g_sump_usbInputRingBuffer;
 #endif
 
 #define RX_RX_CAPTURE_BUFFER_HIGH 0x01
@@ -100,7 +100,7 @@ void setup() {
   //disable_jtag();
 
 #ifndef SUMP_H
-  ring_buffer_u8_init(&usbInputRingBuffer, usbInputBuffer, INPUT_BUFFER_SIZE);
+  ring_buffer_u8_init(&_g_sump_usbInputRingBuffer, _g_sump_usbInputBuffer, INPUT_BUFFER_SIZE);
 #endif
 
   sump_setup();
@@ -119,26 +119,33 @@ void setup() {
   debug_write_line("?END setup");
 }
 
+uint8_t lastWriteenState = 0;
+
 void loop() {
   rf_rx_process_capture_buffer();
   sump_loop();
 
   if (writeen_read()) {
-    //delay_ms(1000);
-    em4x05_read(EM4X05_ADDR_CHIP_TYPE);
-    //em4x05_read(EM4X05_ADDR_UID);
-    em4x05_config cfg;
-    em4x05_config_init(&cfg);
-    cfg.dataRate = EM4X05_DATA_RATE_32;
-    cfg.encoder = EM4X05_ENCODER_MANCHESTER;
-    cfg.delay = EM4X05_DELAY_ON_NONE;
-    cfg.lastDefaultReadWord = EM4X05_LWR_6;
-    cfg.readLogin = EM4X05_READ_LOGIN_OFF;
-    cfg.writeLogin = EM4X05_WRITE_LOGIN_OFF;
-    cfg.allowDisable = EM4X05_ALLOW_DISABLE_OFF;
-    cfg.readerTalkFirst = EM4X05_RTF_OFF;
-    cfg.pigeonMode = EM4X05_PIGEON_MODE_OFF;
-    //em4x05_write_config(&cfg);
+    if (lastWriteenState == 0) {
+      sump_trigger();
+      em4x05_read(EM4X05_ADDR_CHIP_TYPE);
+      //em4x05_read(EM4X05_ADDR_UID);
+      em4x05_config cfg;
+      em4x05_config_init(&cfg);
+      cfg.dataRate = EM4X05_DATA_RATE_32;
+      cfg.encoder = EM4X05_ENCODER_MANCHESTER;
+      cfg.delay = EM4X05_DELAY_ON_NONE;
+      cfg.lastDefaultReadWord = EM4X05_LWR_6;
+      cfg.readLogin = EM4X05_READ_LOGIN_OFF;
+      cfg.writeLogin = EM4X05_WRITE_LOGIN_OFF;
+      cfg.allowDisable = EM4X05_ALLOW_DISABLE_OFF;
+      cfg.readerTalkFirst = EM4X05_RTF_OFF;
+      cfg.pigeonMode = EM4X05_PIGEON_MODE_OFF;
+      //em4x05_write_config(&cfg);
+    }
+    lastWriteenState = 1;
+  } else {
+    lastWriteenState = 0;
   }
 
   //  delay_ms(500);
@@ -308,8 +315,9 @@ void on_tim2_irq() {
   if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET) {
     TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
     if (g_sump_enabled) {
-      uint8_t data = GPIO_ReadInputDataBit(RF_TX_PORT, RF_TX_PIN) ? 0x01 : 0x00;
-      data |= writeen_read() ? 0x02 : 0x00;
+      uint8_t data = writeen_read() ? 0x01 : 0x00;
+      data |= GPIO_ReadInputDataBit(RF_RX_PORT, RF_RX_PIN) ? 0x02 : 0x00;
+      data |= GPIO_ReadInputDataBit(RF_TX_PORT, RF_TX_PIN) ? 0x04 : 0x00;
       sump_tx(data);
     }
   }
@@ -459,8 +467,8 @@ void usb_on_rx(uint8_t* data, uint16_t len) {
 #define MAX_LINE_LENGTH 100
   char line[MAX_LINE_LENGTH];
 
-  ring_buffer_u8_write(&usbInputRingBuffer, data, len);
-  while (ring_buffer_u8_readline(&usbInputRingBuffer, line, MAX_LINE_LENGTH) > 0) {
+  ring_buffer_u8_write(&_g_sump_usbInputRingBuffer, data, len);
+  while (ring_buffer_u8_readline(&_g_sump_usbInputRingBuffer, line, MAX_LINE_LENGTH) > 0) {
     debug_write_line(line);
   }
 }

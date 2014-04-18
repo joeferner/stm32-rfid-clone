@@ -15,6 +15,7 @@ typedef struct _ring_buffer_u8 {
 
 void ring_buffer_u8_init(ring_buffer_u8* ring, uint8_t* storage, uint16_t size);
 uint16_t ring_buffer_u8_available(ring_buffer_u8* ring);
+uint16_t ring_buffer_u8_free(ring_buffer_u8* ring);
 void ring_buffer_u8_read(ring_buffer_u8* ring, uint8_t* buffer, uint16_t size);
 uint8_t ring_buffer_u8_read_byte(ring_buffer_u8* ring);
 void ring_buffer_u8_write(ring_buffer_u8* ring, const uint8_t* buffer, uint16_t size);

@@ -90,10 +90,6 @@ void setup() {
   // 2 bit for pre-emption priority, 2 bits for subpriority
   NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 
-#ifndef SUMP_H
-  ring_buffer_u8_init(&usbInputRingBuffer, usbInputBuffer, INPUT_BUFFER_SIZE);
-#endif
-
   debug_setup();
 
   if (usb_detect()) {
@@ -102,6 +98,10 @@ void setup() {
 
   //delay_ms(1000); // !!!! IMPORTANT: Keep this line in here. If we have a JTAG issue we need this time to get in before JTAG is disabled.
   //disable_jtag();
+
+#ifndef SUMP_H
+  ring_buffer_u8_init(&usbInputRingBuffer, usbInputBuffer, INPUT_BUFFER_SIZE);
+#endif
 
   sump_setup();
 

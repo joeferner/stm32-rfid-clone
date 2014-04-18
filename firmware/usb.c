@@ -38,13 +38,6 @@ void usb_setup(void) {
   gpioInitStructure.GPIO_Speed = GPIO_Speed_2MHz;
   GPIO_Init(USB_DISCONNECT_PORT, &gpioInitStructure);
 
-  /* USB_DETECT input */
-  RCC_APB2PeriphClockCmd(USB_DETECT_RCC, ENABLE);
-  gpioInitStructure.GPIO_Pin = USB_DETECT_PIN;
-  gpioInitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-  gpioInitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-  GPIO_Init(USB_DETECT_PORT, &gpioInitStructure);
-
   /* Configure the EXTI line 18 connected internally to the USB IP */
   EXTI_ClearITPendingBit(EXTI_Line18);
   extiInitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
@@ -53,10 +46,10 @@ void usb_setup(void) {
   extiInitStructure.EXTI_LineCmd = ENABLE;
   EXTI_Init(&extiInitStructure);
 
-  USB_Cable_Config(DISABLE);
-
-  /* Enable USB clock */
+  RCC_USBCLKConfig(RCC_USBCLKSource_PLLCLK_1Div5);
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_USB, ENABLE);
+
+  USB_Cable_Config(DISABLE);
 
   nvicInitStructure.NVIC_IRQChannel = USB_LP_CAN1_RX0_IRQn;
   nvicInitStructure.NVIC_IRQChannelPreemptionPriority = 2;
@@ -79,6 +72,15 @@ void usb_setup(void) {
 }
 
 int usb_detect() {
+  GPIO_InitTypeDef gpioInitStructure;
+
+  /* USB_DETECT input */
+  RCC_APB2PeriphClockCmd(USB_DETECT_RCC, ENABLE);
+  gpioInitStructure.GPIO_Pin = USB_DETECT_PIN;
+  gpioInitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+  gpioInitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+  GPIO_Init(USB_DETECT_PORT, &gpioInitStructure);
+
   return GPIO_ReadInputDataBit(USB_DETECT_PORT, USB_DETECT_PIN);
 }
 
@@ -98,6 +100,10 @@ void usb_write(const uint8_t* data, uint16_t len) {
 
 void usb_write_u8(uint8_t data) {
   ring_buffer_u8_write_byte(&usb_tx_ring_buffer, data);
+}
+
+uint16_t usb_write_free() {
+  return ring_buffer_u8_free(&usb_tx_ring_buffer);
 }
 
 /**

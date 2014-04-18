@@ -17,6 +17,10 @@ uint16_t ring_buffer_u8_available(ring_buffer_u8* ring) {
   return ring->available;
 }
 
+uint16_t ring_buffer_u8_free(ring_buffer_u8* ring) {
+  return ring->size - ring->available;
+}
+
 uint8_t ring_buffer_u8_read_byte(ring_buffer_u8* ring) {
   if (ring->available == 0) {
     return 0;

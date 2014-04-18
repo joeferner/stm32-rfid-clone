@@ -3,6 +3,7 @@
 #include "ring_buffer.h"
 #include "usb.h"
 #include "debug.h"
+#include "delay.h"
 
 #define SUMP_RESET                0x00
 #define SUMP_ARM                  0x01
@@ -11,9 +12,18 @@
 #define SUMP_GET_METADATA         0x04
 #define SUMP_XON                  0x11
 #define SUMP_XOFF                 0x13
-#define SUMP_TRIGGER_MASK         0xC0
-#define SUMP_TRIGGER_VALUES       0xC1
-#define SUMP_TRIGGER_CONFIG       0xC2
+#define SUMP_TRIGGER_MASK_CH0     0xC0
+#define SUMP_TRIGGER_MASK_CH1     0xC4
+#define SUMP_TRIGGER_MASK_CH2     0xC8
+#define SUMP_TRIGGER_MASK_CH3     0xCC
+#define SUMP_TRIGGER_VALUES_CH0   0xC1
+#define SUMP_TRIGGER_VALUES_CH1   0xC5
+#define SUMP_TRIGGER_VALUES_CH2   0xC9
+#define SUMP_TRIGGER_VALUES_CH3   0xCD
+#define SUMP_TRIGGER_CONFIG_CH0   0xC2
+#define SUMP_TRIGGER_CONFIG_CH1   0xC6
+#define SUMP_TRIGGER_CONFIG_CH2   0xCA
+#define SUMP_TRIGGER_CONFIG_CH3   0xCE
 #define SUMP_SET_DIVIDER          0x80
 #define SUMP_SET_READ_DELAY_COUNT 0x81
 #define SUMP_SET_FLAGS            0x82
@@ -27,11 +37,22 @@ uint8_t _sump_get_command(uint8_t *cmd);
 void sump_setup() {
   ring_buffer_u8_init(&usbInputRingBuffer, usbInputBuffer, INPUT_BUFFER_SIZE);
 
-  g_sump_config.channel = 0;
-  g_sump_config.delay = 0;
-  g_sump_config.level = 0;
-  g_sump_config.serial = 0;
-  g_sump_config.start = 0;
+  int ch;
+  for (ch = 0; ch < 4; ch++) {
+    g_sump_trigger[ch][0] = 0;
+    g_sump_trigger[ch][1] = 0;
+    g_sump_trigger[ch][2] = 0;
+    g_sump_trigger[ch][3] = 0;
+    g_sump_trigger_values[ch][0] = 0;
+    g_sump_trigger_values[ch][1] = 0;
+    g_sump_trigger_values[ch][2] = 0;
+    g_sump_trigger_values[ch][3] = 0;
+    g_sump_config[ch].channel = 0;
+    g_sump_config[ch].delay = 0;
+    g_sump_config[ch].level = 0;
+    g_sump_config[ch].serial = 0;
+    g_sump_config[ch].start = 0;
+  }
 }
 
 void sump_loop() {
@@ -52,23 +73,59 @@ void sump_loop() {
         usb_write_u8('S');
         break;
       case SUMP_ARM:
+        debug_write_line("SUMP: arm");
         ring_buffer_u8_read_byte(&usbInputRingBuffer);
-        g_sump_tx_left = 100000;
         g_sump_enabled = 1;
         break;
-      case SUMP_TRIGGER_MASK:
-        _sump_get_command(g_sump_trigger);
+      case SUMP_TRIGGER_MASK_CH0:
+        _sump_get_command(g_sump_trigger[0]);
         break;
-      case SUMP_TRIGGER_VALUES:
-        _sump_get_command(g_sump_trigger_values);
+      case SUMP_TRIGGER_MASK_CH1:
+        _sump_get_command(g_sump_trigger[1]);
         break;
-      case SUMP_TRIGGER_CONFIG:
+      case SUMP_TRIGGER_MASK_CH2:
+        _sump_get_command(g_sump_trigger[2]);
+        break;
+      case SUMP_TRIGGER_MASK_CH3:
+        _sump_get_command(g_sump_trigger[3]);
+        break;
+      case SUMP_TRIGGER_VALUES_CH0:
+        _sump_get_command(g_sump_trigger_values[0]);
+        break;
+      case SUMP_TRIGGER_VALUES_CH1:
+        _sump_get_command(g_sump_trigger_values[1]);
+        break;
+      case SUMP_TRIGGER_VALUES_CH2:
+        _sump_get_command(g_sump_trigger_values[2]);
+        break;
+      case SUMP_TRIGGER_VALUES_CH3:
+        _sump_get_command(g_sump_trigger_values[3]);
+        break;
+      case SUMP_TRIGGER_CONFIG_CH0:
+      case SUMP_TRIGGER_CONFIG_CH1:
+      case SUMP_TRIGGER_CONFIG_CH2:
+      case SUMP_TRIGGER_CONFIG_CH3:
         if (_sump_get_command(cmdBytes)) {
-          g_sump_config.delay = (uint16_t) cmdBytes[0] | ((uint16_t) cmdBytes[1] << 8);
-          g_sump_config.channel = ((cmdBytes[2] >> 4) & 0x0f) | ((cmdBytes[3] << 4) & 0x10);
-          g_sump_config.level = cmdBytes[2] & 0x03;
-          g_sump_config.start = (cmdBytes[3] & 0x08) ? 1 : 0;
-          g_sump_config.serial = (cmdBytes[3] & 0x04) ? 1 : 0;
+          int ch = 0;
+          switch (d) {
+            case SUMP_TRIGGER_CONFIG_CH0:
+              ch = 0;
+              break;
+            case SUMP_TRIGGER_CONFIG_CH1:
+              ch = 1;
+              break;
+            case SUMP_TRIGGER_CONFIG_CH2:
+              ch = 2;
+              break;
+            case SUMP_TRIGGER_CONFIG_CH3:
+              ch = 3;
+              break;
+          }
+          g_sump_config[ch].delay = (uint16_t) cmdBytes[0] | ((uint16_t) cmdBytes[1] << 8);
+          g_sump_config[ch].channel = ((cmdBytes[2] >> 4) & 0x0f) | ((cmdBytes[3] << 4) & 0x10);
+          g_sump_config[ch].level = cmdBytes[2] & 0x03;
+          g_sump_config[ch].start = (cmdBytes[3] & 0x08) ? 1 : 0;
+          g_sump_config[ch].serial = (cmdBytes[3] & 0x04) ? 1 : 0;
         }
         break;
       case SUMP_SET_DIVIDER:
@@ -89,6 +146,11 @@ void sump_loop() {
           g_sump_delay_count = cmdBytes[3];
           g_sump_delay_count = g_sump_delay_count << 8;
           g_sump_delay_count |= cmdBytes[2];
+
+          g_sump_tx_left = 4 * (g_sump_read_count + 1);
+          debug_write("SUMP: read count: ");
+          debug_write_u32(g_sump_tx_left, 10);
+          debug_write_line("");
         }
         break;
       case SUMP_SET_FLAGS:
@@ -165,10 +227,14 @@ void sump_loop() {
 
 void sump_tx(uint8_t data) {
   if (g_sump_enabled) {
+    if (usb_write_free() < 1) {
+      return;
+    }
     usb_write_u8(data);
     g_sump_tx_left--;
     if (g_sump_tx_left <= 0) {
       g_sump_enabled = 0;
+      debug_write_line("SUMP: dump complete");
     }
   }
 }

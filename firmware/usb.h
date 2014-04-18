@@ -83,6 +83,7 @@ extern "C" {
   void usb_write(const uint8_t* data, uint16_t len);
   void usb_write_str(const char* data);
   void usb_write_u8(uint8_t data);
+  uint16_t usb_write_free();
 
   void USB_Istr(void);
 

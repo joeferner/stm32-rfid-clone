@@ -7,7 +7,7 @@
 extern "C" {
 #endif
   
-#define SUMP_SAMPLE_MEMORY    1024
+#define SUMP_SAMPLE_MEMORY    102400
 #define SUMP_SAMPLE_RATE      125000
 #define SUMP_NUMBER_OF_PROBES 2
 
@@ -32,9 +32,9 @@ extern "C" {
   } sump_flags;
 
   int g_sump_enabled;
-  uint8_t g_sump_trigger[4];
-  uint8_t g_sump_trigger_values[4];
-  sump_config g_sump_config;
+  uint8_t g_sump_trigger[4][4];
+  uint8_t g_sump_trigger_values[4][4];
+  sump_config g_sump_config[4];
   uint32_t g_sump_divider;
   uint16_t g_sump_read_count;
   uint16_t g_sump_delay_count;

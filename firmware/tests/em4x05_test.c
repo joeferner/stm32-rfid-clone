@@ -1,13 +1,14 @@
 
+#include "CuTest.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "em4x05.h"
+#include "../em4x05.h"
 
 extern uint32_t _em4x05_config_to_uint32(em4x05_config* cfg);
 extern void _em4x05_write_uint32_calc(uint32_t data, uint8_t* bits);
 
-int main(int argc, const char* args[]) {
+void test_em4x05(CuTest *tc) {
   int i;
   em4x05_config cfg;
   em4x05_config_init(&cfg);
@@ -22,7 +23,7 @@ int main(int argc, const char* args[]) {
   cfg.pigeonMode = EM4X05_PIGEON_MODE_OFF;
   uint32_t found = _em4x05_config_to_uint32(&cfg);
   if (0xf2018000 != found) {
-    printf("ERROR: expected: 0x%08x, found: 0x%08x\n", 0xf2018000, found);
+    CuAssertIntEquals(tc, 0xf2018001, found);
   }
 
   uint8_t bits[45];
@@ -36,13 +37,17 @@ int main(int argc, const char* args[]) {
   _em4x05_write_uint32_calc(found, bits);
   for (i = 0; i < 45; i++) {
     if (bits[i] != expectedBits[i]) {
-      printf("ERROR: expected: %d, found: %d, at index %d\n", expectedBits[i], bits[i], i);
+      CuAssertIntEquals(tc, expectedBits[i], bits[i]);
     }
   }
 
   em4x05_write_config(&cfg);
+}
 
-  return 0;
+CuSuite* em4x05_suite() {
+  CuSuite* suite = CuSuiteNew();
+  SUITE_ADD_TEST(suite, test_em4x05);
+  return suite;
 }
 
 void debug_write_line(const char* str) {
@@ -80,11 +85,11 @@ void delay_ms(uint32_t ms) {
 void delay_us(uint32_t us) {
 }
 
-extern void rf_tx_on() {
+void rf_tx_on() {
   //printf("rf_tx_on\n");
 }
 
-extern void rf_tx_off() {
+void rf_tx_off() {
   //printf("rf_tx_off\n");
 }
 

@@ -91,6 +91,7 @@ void setup() {
   NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 
   debug_setup();
+  debug_led_set(1);
 
   if (usb_detect()) {
     usb_setup();

@@ -239,7 +239,7 @@ void sump_tx(uint8_t data) {
     if (usb_write_free() < 1) {
       return;
     }
-    last = ((last ^ 0xff) & 0xf8) | (data & 0x07);
+    last = ((last ^ 0xff) & 0xf0) | (data & 0x0f);
     usb_write_u8(last);
     g_sump_tx_left--;
     if (g_sump_tx_left <= 0) {

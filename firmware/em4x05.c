@@ -24,10 +24,12 @@ void em4x05_read(uint8_t addr) {
   debug_write_u16(addr, 16);
   debug_write_line("");
 
+  debug_led_set(1);
   _em4x05_tx_first_stop();
   _em4x05_tx(0);
   _em4x05_tx_command(COMMAND_READ);
   _em4x05_tx_addr(addr);
+  debug_led_set(0);
 }
 
 void _em4x05_tx_command(uint8_t command) {
@@ -105,6 +107,7 @@ void em4x05_write(uint8_t addr, uint32_t value) {
   int i;
   _em4x05_write_uint32_calc(value, bits);
 
+  debug_led_set(1);
   _em4x05_tx_first_stop();
   _em4x05_tx(0);
   _em4x05_tx_command(COMMAND_WRITE);
@@ -112,6 +115,7 @@ void em4x05_write(uint8_t addr, uint32_t value) {
   for (i = 0; i < 45; i++) {
     _em4x05_tx(bits[i]);
   }
+  debug_led_set(0);
   delay_ms(100);
 
   debug_write_line("END em4x05_write");
@@ -197,5 +201,5 @@ void _em4x05_tx(int i) {
 #endif
 
 void _em4x05_delay(int rfTicks) {
-  delay_us(US_PER_RF_TICK * rfTicks);
+  delay_us((US_PER_RF_TICK * rfTicks) + 8);
 }

@@ -43,6 +43,7 @@ void rf_rx_reset_read();
 void rf_rx_process_read_buffer();
 void writeen_setup();
 int writeen_read();
+void mysump_timer_setup();
 
 #ifndef SUMP_H
 #define INPUT_BUFFER_SIZE 100
@@ -93,9 +94,9 @@ void setup() {
   debug_setup();
   debug_led_set(1);
 
-  if (usb_detect()) {
-    usb_setup();
-  }
+//  if (usb_detect()) {
+//    usb_setup();
+//  }
 
   //delay_ms(1000); // !!!! IMPORTANT: Keep this line in here. If we have a JTAG issue we need this time to get in before JTAG is disabled.
   //disable_jtag();
@@ -105,6 +106,7 @@ void setup() {
 #endif
 
   sump_setup();
+  mysump_timer_setup();
 
   time_setup();
 
@@ -129,20 +131,20 @@ void loop() {
   if (writeen_read()) {
     if (lastWriteenState == 0) {
       sump_trigger();
-      em4x05_read(EM4X05_ADDR_CHIP_TYPE);
+      //em4x05_read(EM4X05_ADDR_CHIP_TYPE);
       //em4x05_read(EM4X05_ADDR_UID);
       em4x05_config cfg;
       em4x05_config_init(&cfg);
-      cfg.dataRate = EM4X05_DATA_RATE_32;
+      cfg.dataRate = EM4X05_DATA_RATE_64;
       cfg.encoder = EM4X05_ENCODER_MANCHESTER;
       cfg.delay = EM4X05_DELAY_ON_NONE;
-      cfg.lastDefaultReadWord = EM4X05_LWR_6;
+      cfg.lastDefaultReadWord = EM4X05_LWR_9;
       cfg.readLogin = EM4X05_READ_LOGIN_OFF;
       cfg.writeLogin = EM4X05_WRITE_LOGIN_OFF;
       cfg.allowDisable = EM4X05_ALLOW_DISABLE_OFF;
       cfg.readerTalkFirst = EM4X05_RTF_OFF;
       cfg.pigeonMode = EM4X05_PIGEON_MODE_OFF;
-      //em4x05_write_config(&cfg);
+      em4x05_write_config(&cfg);
     }
     lastWriteenState = 1;
   } else {
@@ -230,17 +232,19 @@ void rf_tx_setup() {
   nvicStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&nvicStructure);
 
-  TIM_ITConfig(RF_TX_TIMER, TIM_IT_Update, ENABLE);
-
   debug_write_line("?END rf_tx_setup");
 }
 
+int g_rf_tx_state = 1;
+
 void rf_tx_on() {
+  g_rf_tx_state = 1;
   TIM_Cmd(RF_TX_TIMER, ENABLE);
   RF_TX_TIMER_CH_SetCompare(RF_TX_TIMER, RF_TX_PWM_PERIOD / 2);
 }
 
 void rf_tx_off() {
+  g_rf_tx_state = 0;
   TIM_Cmd(RF_TX_TIMER, DISABLE);
   RF_TX_TIMER_CH_SetCompare(RF_TX_TIMER, 0);
 }
@@ -312,13 +316,42 @@ void on_dma1_ch2_irq() {
   }
 }
 
-void on_tim2_irq() {
-  if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET) {
-    TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+void mysump_timer_setup() {
+  TIM_TimeBaseInitTypeDef timeBaseInit;
+
+  debug_write_line("?BEGIN mysump_timer_setup");
+
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
+
+  TIM_TimeBaseStructInit(&timeBaseInit);
+  timeBaseInit.TIM_Period = RF_TX_PWM_PERIOD;
+  timeBaseInit.TIM_Prescaler = 0;
+  timeBaseInit.TIM_ClockDivision = 0;
+  timeBaseInit.TIM_CounterMode = TIM_CounterMode_Up;
+  TIM_TimeBaseInit(TIM4, &timeBaseInit);
+
+  NVIC_InitTypeDef nvicStructure;
+  nvicStructure.NVIC_IRQChannel = TIM4_IRQn;
+  nvicStructure.NVIC_IRQChannelPreemptionPriority = 0;
+  nvicStructure.NVIC_IRQChannelSubPriority = 1;
+  nvicStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&nvicStructure);
+
+  TIM_ITConfig(TIM4, TIM_IT_Update, ENABLE);
+
+  TIM_Cmd(TIM4, ENABLE);
+
+  debug_write_line("?END mysump_timer_setup");
+}
+
+void on_tim4_irq() {
+  if (TIM_GetITStatus(TIM4, TIM_IT_Update) != RESET) {
+    TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
     if (g_sump_enabled) {
       uint8_t data = writeen_read() ? 0x01 : 0x00;
       data |= GPIO_ReadInputDataBit(RF_RX_PORT, RF_RX_PIN) ? 0x02 : 0x00;
       data |= GPIO_ReadInputDataBit(RF_TX_PORT, RF_TX_PIN) ? 0x04 : 0x00;
+      data |= g_rf_tx_state ? 0x08 : 0x00;
       sump_tx(data);
     }
   }

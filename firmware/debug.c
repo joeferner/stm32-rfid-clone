@@ -1,4 +1,3 @@
-
 #include "platform_config.h"
 #include "debug.h"
 #include "usb.h"

@@ -1,4 +1,3 @@
-
 #include <stm32f10x_gpio.h>
 #include <stm32f10x_rcc.h>
 #include <stm32f10x_tim.h>
@@ -404,60 +403,60 @@ void rf_rx_process(int i) {
   }
 
   switch (readState) {
-    case READ_STATE_WAIT_FOR_START:
-      if (bit == RF_RX_1) {
-        readCount++;
-        if (readCount >= 15) {
-          readState = READ_STATE_WAIT_FOR_END_OF_START;
+  case READ_STATE_WAIT_FOR_START:
+    if (bit == RF_RX_1) {
+      readCount++;
+      if (readCount >= 15) {
+        readState = READ_STATE_WAIT_FOR_END_OF_START;
+      }
+    } else {
+      readCount = 0;
+    }
+    break;
+
+  case READ_STATE_WAIT_FOR_END_OF_START:
+    if (bit == RF_RX_0) {
+      readState = READ_STATE_DATA;
+      readCount = 0;
+    } else {
+      break;
+    }
+  // NOTE: yes the lack of break here is intentional, if this is a data bit we need to process it.
+
+  case READ_STATE_DATA:
+    if (bit == RF_RX_0) {
+      if (readCount > 0) { // if last read is >0 it means the last bit was a one.
+        if (readCount >= 3 && readCount <= 8) {
+          readBuffer[readBufferOffset++] = 1;
+        } else if (readCount <= 14) {
+          readBuffer[readBufferOffset++] = 1;
+          readBuffer[readBufferOffset++] = 1;
+        } else {
+          readState = READ_STATE_END;
+          rf_rx_process_read_buffer();
+          return;
         }
-      } else {
         readCount = 0;
       }
-      break;
-
-    case READ_STATE_WAIT_FOR_END_OF_START:
-      if (bit == RF_RX_0) {
-        readState = READ_STATE_DATA;
+      readCount--;
+    } else { /* (bit == RF_RX_1) */
+      if (readCount < 0) { // if last read is <0 it means the last bit was a zero.
+        readCount = -readCount;
+        if (readCount >= 3 && readCount <= 8) {
+          readBuffer[readBufferOffset++] = 0;
+        } else if (readCount <= 14) {
+          readBuffer[readBufferOffset++] = 0;
+          readBuffer[readBufferOffset++] = 0;
+        } else {
+          readState = READ_STATE_END;
+          rf_rx_process_read_buffer();
+          return;
+        }
         readCount = 0;
-      } else {
-        break;
       }
-      // NOTE: yes the lack of break here is intentional, if this is a data bit we need to process it.
-
-    case READ_STATE_DATA:
-      if (bit == RF_RX_0) {
-        if (readCount > 0) { // if last read is >0 it means the last bit was a one.
-          if (readCount >= 3 && readCount <= 8) {
-            readBuffer[readBufferOffset++] = 1;
-          } else if (readCount <= 14) {
-            readBuffer[readBufferOffset++] = 1;
-            readBuffer[readBufferOffset++] = 1;
-          } else {
-            readState = READ_STATE_END;
-            rf_rx_process_read_buffer();
-            return;
-          }
-          readCount = 0;
-        }
-        readCount--;
-      } else /* (bit == RF_RX_1) */ {
-        if (readCount < 0) { // if last read is <0 it means the last bit was a zero.
-          readCount = -readCount;
-          if (readCount >= 3 && readCount <= 8) {
-            readBuffer[readBufferOffset++] = 0;
-          } else if (readCount <= 14) {
-            readBuffer[readBufferOffset++] = 0;
-            readBuffer[readBufferOffset++] = 0;
-          } else {
-            readState = READ_STATE_END;
-            rf_rx_process_read_buffer();
-            return;
-          }
-          readCount = 0;
-        }
-        readCount++;
-      }
-      break;
+      readCount++;
+    }
+    break;
   }
 }
 

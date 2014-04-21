@@ -1,4 +1,3 @@
-
 #ifndef PLATFORM_CONFIG_H
 #define	PLATFORM_CONFIG_H
 
@@ -6,7 +5,7 @@
 extern "C" {
 #endif
 
-  // USB device serial number
+// USB device serial number
 #define ID1                    (0x1FFFF7E8)
 #define ID2                    (0x1FFFF7EC)
 #define ID3                    (0x1FFFF7F0)
@@ -35,7 +34,7 @@ extern "C" {
 #define WRITEEN_RCC            RCC_APB2Periph_GPIOA
 #define WRITEEN_PORT           GPIOA
 #define WRITEEN_PIN            GPIO_Pin_0
-  
+
 #define RF_TX_TIMER            TIM2
 #define RF_TX_TIMER_RCC        RCC_APB1Periph_TIM2
 #define RF_TX_TIMER_CH_Init          TIM_OC3Init

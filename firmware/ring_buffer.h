@@ -1,4 +1,3 @@
-
 #ifndef _ring_buffer_h_
 #define _ring_buffer_h_
 

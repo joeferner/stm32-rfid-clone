@@ -1,4 +1,3 @@
-
 #include "em4x05.h"
 #include "delay.h"
 #include "debug.h"
@@ -52,10 +51,10 @@ void _em4x05_tx_addr(uint8_t addr) {
   _em4x05_tx(0);
 
   int parity =
-          ((addr & 0x8) ? 1 : 0)
-          ^ ((addr & 0x4) ? 1 : 0)
-          ^ ((addr & 0x2) ? 1 : 0)
-          ^ ((addr & 0x1) ? 1 : 0);
+    ((addr & 0x8) ? 1 : 0)
+    ^ ((addr & 0x4) ? 1 : 0)
+    ^ ((addr & 0x2) ? 1 : 0)
+    ^ ((addr & 0x1) ? 1 : 0);
   _em4x05_tx(parity);
 }
 

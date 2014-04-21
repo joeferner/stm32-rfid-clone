@@ -1,4 +1,3 @@
-
 #ifndef __USB_CONF_H
 #define __USB_CONF_H
 

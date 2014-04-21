@@ -65,29 +65,29 @@ extern "C" {
 
 #pragma pack(push, 1)
 
-  typedef struct {
-    uint32_t dataRate : 6;
-    uint32_t encoder : 4;
-    uint32_t notUsed0 : 2;
-    uint32_t delay : 2;
-    uint32_t lastDefaultReadWord : 4;
-    uint32_t readLogin : 1;
-    uint32_t notUsed1 : 1;
-    uint32_t writeLogin : 1;
-    uint32_t notUsed2 : 2;
-    uint32_t allowDisable : 1;
-    uint32_t readerTalkFirst : 1;
-    uint32_t notUsed3 : 1;
-    uint32_t pigeonMode : 1;
-    uint32_t notUsed4 : 5;
-  } em4x05_config;
+typedef struct {
+  uint32_t dataRate : 6;
+  uint32_t encoder : 4;
+  uint32_t notUsed0 : 2;
+  uint32_t delay : 2;
+  uint32_t lastDefaultReadWord : 4;
+  uint32_t readLogin : 1;
+  uint32_t notUsed1 : 1;
+  uint32_t writeLogin : 1;
+  uint32_t notUsed2 : 2;
+  uint32_t allowDisable : 1;
+  uint32_t readerTalkFirst : 1;
+  uint32_t notUsed3 : 1;
+  uint32_t pigeonMode : 1;
+  uint32_t notUsed4 : 5;
+} em4x05_config;
 
 #pragma pack(pop)
 
-  void em4x05_read(uint8_t addr);
-  void em4x05_write(uint8_t addr, uint32_t value);
-  void em4x05_config_init(em4x05_config* cfg);
-  void em4x05_write_config(em4x05_config* cfg);
+void em4x05_read(uint8_t addr);
+void em4x05_write(uint8_t addr, uint32_t value);
+void em4x05_config_init(em4x05_config* cfg);
+void em4x05_write_config(em4x05_config* cfg);
 
 #ifdef	__cplusplus
 }

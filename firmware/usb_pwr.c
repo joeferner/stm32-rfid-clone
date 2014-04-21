@@ -1,4 +1,3 @@
-
 #include <usb_lib.h>
 #include <stm32f10x_pwr.h>
 #include "usb_conf.h"
@@ -171,7 +170,7 @@ void Suspend(void) {
     PWR->CR = savePWR_CR;
 
     /* Reset SLEEPDEEP bit of Cortex System Control Register */
-#if defined (STM32F30X) || defined (STM32F37X)		
+#if defined (STM32F30X) || defined (STM32F37X)
     SCB->SCR &= (uint32_t) ~((uint32_t) SCB_SCR_SLEEPDEEP_Msk);
 #else
     SCB->SCR &= (uint32_t) ~((uint32_t) SCB_SCR_SLEEPDEEP);
@@ -229,51 +228,51 @@ void Resume(RESUME_STATE eResumeSetVal) {
     ResumeS.eState = eResumeSetVal;
   }
   switch (ResumeS.eState) {
-    case RESUME_EXTERNAL:
-      if (remotewakeupon == 0) {
-        Resume_Init();
-        ResumeS.eState = RESUME_OFF;
-      } else /* RESUME detected during the RemoteWAkeup signalling => keep RemoteWakeup handling*/ {
-        ResumeS.eState = RESUME_ON;
-      }
-      break;
-    case RESUME_INTERNAL:
+  case RESUME_EXTERNAL:
+    if (remotewakeupon == 0) {
       Resume_Init();
-      ResumeS.eState = RESUME_START;
-      remotewakeupon = 1;
-      break;
-    case RESUME_LATER:
-      ResumeS.bESOFcnt = 2;
-      ResumeS.eState = RESUME_WAIT;
-      break;
-    case RESUME_WAIT:
-      ResumeS.bESOFcnt--;
-      if (ResumeS.bESOFcnt == 0) {
-        ResumeS.eState = RESUME_START;
-      }
-      break;
-    case RESUME_START:
-      wCNTR = _GetCNTR();
-      wCNTR |= CNTR_RESUME;
-      _SetCNTR(wCNTR);
-      ResumeS.eState = RESUME_ON;
-      ResumeS.bESOFcnt = 10;
-      break;
-    case RESUME_ON:
-      ResumeS.bESOFcnt--;
-      if (ResumeS.bESOFcnt == 0) {
-        wCNTR = _GetCNTR();
-        wCNTR &= (~CNTR_RESUME);
-        _SetCNTR(wCNTR);
-        ResumeS.eState = RESUME_OFF;
-        remotewakeupon = 0;
-      }
-      break;
-    case RESUME_OFF:
-    case RESUME_ESOF:
-    default:
       ResumeS.eState = RESUME_OFF;
-      break;
+    } else { /* RESUME detected during the RemoteWAkeup signalling => keep RemoteWakeup handling*/
+      ResumeS.eState = RESUME_ON;
+    }
+    break;
+  case RESUME_INTERNAL:
+    Resume_Init();
+    ResumeS.eState = RESUME_START;
+    remotewakeupon = 1;
+    break;
+  case RESUME_LATER:
+    ResumeS.bESOFcnt = 2;
+    ResumeS.eState = RESUME_WAIT;
+    break;
+  case RESUME_WAIT:
+    ResumeS.bESOFcnt--;
+    if (ResumeS.bESOFcnt == 0) {
+      ResumeS.eState = RESUME_START;
+    }
+    break;
+  case RESUME_START:
+    wCNTR = _GetCNTR();
+    wCNTR |= CNTR_RESUME;
+    _SetCNTR(wCNTR);
+    ResumeS.eState = RESUME_ON;
+    ResumeS.bESOFcnt = 10;
+    break;
+  case RESUME_ON:
+    ResumeS.bESOFcnt--;
+    if (ResumeS.bESOFcnt == 0) {
+      wCNTR = _GetCNTR();
+      wCNTR &= (~CNTR_RESUME);
+      _SetCNTR(wCNTR);
+      ResumeS.eState = RESUME_OFF;
+      remotewakeupon = 0;
+    }
+    break;
+  case RESUME_OFF:
+  case RESUME_ESOF:
+  default:
+    ResumeS.eState = RESUME_OFF;
+    break;
   }
 }
 

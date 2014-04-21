@@ -357,16 +357,18 @@ void on_tim4_irq() {
 }
 
 void rf_rx_process_capture_buffer() {
+  int i;
+
   if (rfRxCaptureBufferReady & RX_RX_CAPTURE_BUFFER_LOW) {
     rfRxCaptureBufferReady &= ~RX_RX_CAPTURE_BUFFER_LOW;
-    for (int i = 0; i < RF_RX_CAPTURE_BUFFER_LEN / 2; i++) {
+    for (i = 0; i < RF_RX_CAPTURE_BUFFER_LEN / 2; i++) {
       rf_rx_process(i);
     }
   }
 
   if (rfRxCaptureBufferReady & RX_RX_CAPTURE_BUFFER_HIGH) {
     rfRxCaptureBufferReady &= ~RX_RX_CAPTURE_BUFFER_HIGH;
-    for (int i = RF_RX_CAPTURE_BUFFER_LEN / 2; i < RF_RX_CAPTURE_BUFFER_LEN; i++) {
+    for (i = RF_RX_CAPTURE_BUFFER_LEN / 2; i < RF_RX_CAPTURE_BUFFER_LEN; i++) {
       rf_rx_process(i);
     }
   }
@@ -460,9 +462,11 @@ void rf_rx_process(int i) {
 }
 
 void rf_rx_process_read_buffer() {
+  int i;
+
   rf_rx_disable();
   debug_write_line("");
-  for (uint16_t i = 0; i < readBufferOffset; i += 2) {
+  for (i = 0; i < readBufferOffset; i += 2) {
     if (readBuffer[i] == 1 && readBuffer[i + 1] == 0) {
       debug_write_ch('1');
     } else if (readBuffer[i] == 0 && readBuffer[i + 1] == 1) {

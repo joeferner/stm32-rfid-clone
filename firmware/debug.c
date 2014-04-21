@@ -3,6 +3,8 @@
 #include "debug.h"
 #include "usb.h"
 #include <stm32f10x_usart.h>
+#include <stm32f10x_gpio.h>
+#include <stm32f10x_rcc.h>
 #include <misc.h>
 
 #define TO_HEX(i) ( (((i) & 0xf) <= 9) ? ('0' + ((i) & 0xf)) : ('A' - 10 + ((i) & 0xf)) )
@@ -74,7 +76,8 @@ void debug_write_line(const char* str) {
 }
 
 void debug_write_bytes(const uint8_t *data, uint16_t len) {
-  for (uint16_t i = 0; i < len; i++) {
+  int i;
+  for (i = 0; i < len; i++) {
     debug_write_ch((char) data[i]);
   }
 }
@@ -145,7 +148,8 @@ void debug_write_i32(int32_t val, uint8_t base) {
 }
 
 void debug_write_u8_array(uint8_t *p, int len) {
-  for (int i = 0; i < len; i++) {
+  int i;
+  for (i = 0; i < len; i++) {
     debug_write_u8(p[i], 16);
     debug_write_ch(' ');
   }

@@ -1,4 +1,5 @@
 #include <stm32f10x_exti.h>
+#include <stm32f10x_gpio.h>
 #include <misc.h>
 #include "usb_lib.h"
 #include "usb.h"

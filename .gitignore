@@ -9,3 +9,7 @@ nbproject/
 .idea/
 connection_info.h
 OldVersions
+stm32-rfid-clone.cbp
+stm32-rfid-clone.depend
+stm32-rfid-clone.layout
+

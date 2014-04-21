@@ -1,6 +1,7 @@
 
 #include <stm32f10x_rcc.h>
 #include <stm32f10x_exti.h>
+#include <stm32f10x_gpio.h>
 #include <misc.h>
 #include "usb.h"
 #include "debug.h"
@@ -140,7 +141,7 @@ void EP3_OUT_Callback(void) {
   /* Get the received data buffer and update the counter */
   rxCount = USB_SIL_Read(EP3_OUT, rxBuffer);
 
-  /* USB data will be immediately processed, this allow next USB traffic being 
+  /* USB data will be immediately processed, this allow next USB traffic being
   NAKed till the end of the USART Xfer */
 
   usb_on_rx(rxBuffer, rxCount);

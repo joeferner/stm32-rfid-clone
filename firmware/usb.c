@@ -1,7 +1,7 @@
 
 #include <stm32f10x_rcc.h>
 #include <stm32f10x_exti.h>
-#include <stm32f10x_misc.h>
+#include <misc.h>
 #include "usb.h"
 #include "debug.h"
 #include "platform_config.h"

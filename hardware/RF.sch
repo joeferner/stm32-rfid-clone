@@ -936,10 +936,10 @@ Wire Wire Line
 	4150 4100 4150 4400
 Text Notes 2550 4650 0    60   ~ 0
 Optimal: 824.59pF
-Text Notes 2600 2800 0    60   ~ 0
+Text Notes 2600 2750 0    60   ~ 0
 1.966mH  100 turns
 Text Notes 2550 4700 0    30   ~ 0
 calculated from http://www.1728.org/resfreq.htm
 Text Notes 2600 2850 0    30   ~ 0
-http://www.66pacific.com/calculators/coil_calc.aspx
+http://www.66pacific.com/calculators/coil_calc.aspx\nhttp://www.circuits.dk/calculator_multi_layer_aircore.htm
 $EndSCHEMATC

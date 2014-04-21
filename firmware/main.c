@@ -94,9 +94,9 @@ void setup() {
   debug_setup();
   debug_led_set(1);
 
-//  if (usb_detect()) {
-//    usb_setup();
-//  }
+  if (usb_detect()) {
+    usb_setup();
+  }
 
   //delay_ms(1000); // !!!! IMPORTANT: Keep this line in here. If we have a JTAG issue we need this time to get in before JTAG is disabled.
   //disable_jtag();
@@ -130,8 +130,7 @@ void loop() {
 
   if (writeen_read()) {
     if (lastWriteenState == 0) {
-      sump_trigger();
-      //em4x05_read(EM4X05_ADDR_CHIP_TYPE);
+      em4x05_read(EM4X05_ADDR_CHIP_TYPE);
       //em4x05_read(EM4X05_ADDR_UID);
       em4x05_config cfg;
       em4x05_config_init(&cfg);
@@ -144,7 +143,7 @@ void loop() {
       cfg.allowDisable = EM4X05_ALLOW_DISABLE_OFF;
       cfg.readerTalkFirst = EM4X05_RTF_OFF;
       cfg.pigeonMode = EM4X05_PIGEON_MODE_OFF;
-      em4x05_write_config(&cfg);
+      //em4x05_write_config(&cfg);
     }
     lastWriteenState = 1;
   } else {

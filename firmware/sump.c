@@ -28,7 +28,7 @@
 #define SUMP_SET_READ_DELAY_COUNT 0x81
 #define SUMP_SET_FLAGS            0x82
 
-#define INPUT_BUFFER_SIZE 100
+#define INPUT_BUFFER_SIZE 8000
 uint8_t _g_sump_usbInputBuffer[INPUT_BUFFER_SIZE];
 ring_buffer_u8 _g_sump_usbInputRingBuffer;
 

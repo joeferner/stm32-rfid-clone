@@ -1,8 +1,5 @@
 
 #include "CuTest.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "../em4x05.h"
 
 extern uint32_t _em4x05_config_to_uint32(em4x05_config* cfg);
@@ -48,51 +45,4 @@ CuSuite* em4x05_suite() {
   CuSuite* suite = CuSuiteNew();
   SUITE_ADD_TEST(suite, test_em4x05);
   return suite;
-}
-
-void debug_write_line(const char* str) {
-  printf("%s\n", str);
-}
-
-void debug_write(const char* str) {
-  printf("%s", str);
-}
-
-void debug_write_ch(char ch) {
-  printf("%c", ch);
-}
-
-void debug_write_u16(uint16_t val, uint8_t base) {
-  if (base == 16) {
-    printf("%04x", val);
-  } else {
-    printf("not implemented");
-  }
-}
-
-void debug_write_u32(uint32_t val, uint8_t base) {
-  if (base == 16) {
-    printf("%08x", val);
-  } else {
-    printf("not implemented");
-  }
-}
-
-void delay_ms(uint32_t ms) {
-
-}
-
-void delay_us(uint32_t us) {
-}
-
-void rf_tx_on() {
-  //printf("rf_tx_on\n");
-}
-
-void rf_tx_off() {
-  //printf("rf_tx_off\n");
-}
-
-void _em4x05_tx(int i) {
-  printf("_em4x05_tx: %d\n", i);
 }

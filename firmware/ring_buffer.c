@@ -43,9 +43,10 @@ void ring_buffer_u8_read(ring_buffer_u8* ring, uint8_t* buffer, uint16_t size) {
 }
 
 void ring_buffer_u8_write_byte(ring_buffer_u8* ring, uint8_t b) {
-  if (ring->available == ring->size) {
-    return;
+  if (ring->available >= ring->size) {
+    ring_buffer_u8_read_byte(ring);
   }
+
   *ring->write = b;
   ring->write++;
   ring->available++;

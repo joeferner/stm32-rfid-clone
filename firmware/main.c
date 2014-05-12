@@ -479,7 +479,8 @@ void rf_rx_process_read_buffer() {
   int i;
 
   rf_rx_disable();
-  debug_write_line("");
+
+  debug_write("?code ");
   for (i = 0; i < readBufferOffset; i += 2) {
     if (readBuffer[i] == 1 && readBuffer[i + 1] == 0) {
       debug_write_ch('1');
@@ -490,6 +491,7 @@ void rf_rx_process_read_buffer() {
     }
   }
   debug_write_line("");
+
   rf_rx_enable();
 }
 

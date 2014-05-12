@@ -68,8 +68,7 @@ void _em4x05_tx(int i) {
   printf("_em4x05_tx: %d\n", i);
 }
 
-void sump_trigger() {
-
+void eeworkbench_begin_tx() {
 }
 
 void debug_led_set(uint8_t i) {

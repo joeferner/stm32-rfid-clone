@@ -23,7 +23,7 @@ extern "C" {
 #define DEBUG_LED_PIN          GPIO_Pin_12
 
 #define DEBUG_USART            USART1
-#define DEBUG_USART_BAUD       57600
+#define DEBUG_USART_BAUD       115200
 #define DEBUG_USART_IRQ        USART1_IRQn
 #define DEBUG_USART_RCC        RCC_APB2Periph_GPIOA | RCC_APB2Periph_AFIO | RCC_APB2Periph_USART1
 #define DEBUG_USART_TX         GPIOA

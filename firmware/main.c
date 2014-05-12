@@ -10,7 +10,6 @@
 #include "ring_buffer.h"
 #include "platform_config.h"
 #include "em4x05.h"
-#include "sump.h"
 
 #define RF_TX_CARRIER_FREQ       125000
 #define RF_TX_PWM_PERIOD         (SystemCoreClock / RF_TX_CARRIER_FREQ)
@@ -41,14 +40,18 @@ void rf_rx_process(int i);
 void rf_rx_reset_read();
 void rf_rx_process_read_buffer();
 void writeen_setup();
-int writeen_read();
-void mysump_timer_setup();
+volatile int writeen_read();
 
-#ifndef SUMP_H
+#define EEWORKBENCH_DATA_SIZE 2048
+void eeworkbench_setup();
+void eeworkbench_begin_tx();
+
+#define MAX_LINE_LENGTH 100
 #define INPUT_BUFFER_SIZE 100
-uint8_t _g_sump_usbInputBuffer[INPUT_BUFFER_SIZE];
-ring_buffer_u8 _g_sump_usbInputRingBuffer;
-#endif
+uint8_t g_usbInputBuffer[INPUT_BUFFER_SIZE];
+ring_buffer_u8 g_usbInputRingBuffer;
+uint8_t g_usartInputBuffer[INPUT_BUFFER_SIZE];
+ring_buffer_u8 g_usartInputRingBuffer;
 
 #define RX_RX_CAPTURE_BUFFER_HIGH 0x01
 #define RX_RX_CAPTURE_BUFFER_LOW  0x02
@@ -65,6 +68,8 @@ uint8_t readState;
 int8_t readCount; // >0 number of 1s. <0 number of 0s. 0 waiting for 0 or 1.
 uint16_t readBufferOffset;
 uint8_t readBuffer[READ_BUFFER_LEN];
+
+uint32_t g_eeworbench_tx_count;
 
 typedef struct {
   uint32_t start;
@@ -93,21 +98,18 @@ void setup() {
   debug_setup();
   debug_led_set(1);
 
-  if (usb_detect()) {
-    usb_setup();
-  }
+  //if (usb_detect()) {
+  //  usb_setup();
+  //}
+
+  ring_buffer_u8_init(&g_usbInputRingBuffer, g_usbInputBuffer, INPUT_BUFFER_SIZE);
+  ring_buffer_u8_init(&g_usartInputRingBuffer, g_usartInputBuffer, INPUT_BUFFER_SIZE);
 
   //delay_ms(1000); // !!!! IMPORTANT: Keep this line in here. If we have a JTAG issue we need this time to get in before JTAG is disabled.
   //disable_jtag();
 
-#ifndef SUMP_H
-  ring_buffer_u8_init(&_g_sump_usbInputRingBuffer, _g_sump_usbInputBuffer, INPUT_BUFFER_SIZE);
-#endif
-
-  sump_setup();
-  mysump_timer_setup();
-
   time_setup();
+  eeworkbench_setup();
 
   writeen_setup();
 
@@ -125,7 +127,6 @@ uint8_t lastWriteenState = 0;
 
 void loop() {
   rf_rx_process_capture_buffer();
-  sump_loop();
 
   if (writeen_read()) {
     if (lastWriteenState == 0) {
@@ -148,11 +149,6 @@ void loop() {
   } else {
     lastWriteenState = 0;
   }
-
-  //  delay_ms(500);
-  //  status_led_off();
-  //  rf_tx_off();
-  //  delay_ms(500);
 }
 
 void assert_failed(uint8_t* file, uint32_t line) {
@@ -181,7 +177,7 @@ void writeen_setup() {
   GPIO_Init(WRITEEN_PORT, &gpioInitStructure);
 }
 
-int writeen_read() {
+volatile int writeen_read() {
   return GPIO_ReadInputDataBit(WRITEEN_PORT, WRITEEN_PIN);
 }
 
@@ -233,7 +229,7 @@ void rf_tx_setup() {
   debug_write_line("?END rf_tx_setup");
 }
 
-int g_rf_tx_state = 1;
+volatile int g_rf_tx_state = 1;
 
 void rf_tx_on() {
   g_rf_tx_state = 1;
@@ -314,10 +310,12 @@ void on_dma1_ch2_irq() {
   }
 }
 
-void mysump_timer_setup() {
+void eeworkbench_setup() {
   TIM_TimeBaseInitTypeDef timeBaseInit;
 
-  debug_write_line("?BEGIN mysump_timer_setup");
+  g_eeworbench_tx_count = 0;
+
+  debug_write_line("?BEGIN eeworkbench_timer_setup");
 
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
 
@@ -339,18 +337,34 @@ void mysump_timer_setup() {
 
   TIM_Cmd(TIM4, ENABLE);
 
-  debug_write_line("?END mysump_timer_setup");
+  debug_write_line("?END eeworkbench_timer_setup");
 }
+
+void eeworkbench_begin_tx() {
+  debug_write_line("!main.clear");
+  debug_write("!main.beginData ");
+  debug_write_u32(EEWORKBENCH_DATA_SIZE, 10);
+  debug_write_line("");
+  g_eeworbench_tx_count = EEWORKBENCH_DATA_SIZE;
+}
+
+volatile uint8_t g_last_eeworkbench_tx = 0;
 
 void on_tim4_irq() {
   if (TIM_GetITStatus(TIM4, TIM_IT_Update) != RESET) {
     TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
-    if (g_sump_enabled) {
-      uint8_t data = writeen_read() ? 0x01 : 0x00;
-      data |= GPIO_ReadInputDataBit(RF_RX_PORT, RF_RX_PIN) ? 0x02 : 0x00;
-      data |= GPIO_ReadInputDataBit(RF_TX_PORT, RF_TX_PIN) ? 0x04 : 0x00;
-      data |= g_rf_tx_state ? 0x08 : 0x00;
-      sump_tx(data);
+    if (g_eeworbench_tx_count > 0) {
+      uint8_t data = writeen_read() ? 0x80 : 0x00;
+      data |= GPIO_ReadInputDataBit(RF_RX_PORT, RF_RX_PIN) ? 0x40 : 0x00;
+      data |= GPIO_ReadInputDataBit(RF_TX_PORT, RF_TX_PIN) ? 0x20 : 0x00;
+      data |= g_rf_tx_state ? 0x10 : 0x00;
+      g_last_eeworkbench_tx = ((g_last_eeworkbench_tx ^ 0xff) & 0x0f) | (data & 0xf0);
+      debug_write_ch(g_last_eeworkbench_tx);
+      g_eeworbench_tx_count--;
+      if(g_eeworbench_tx_count == 0) {
+        debug_write_line("");
+        debug_write_line("?done");
+      }
     }
   }
 }
@@ -497,15 +511,39 @@ void rf_rx_disable() {
   TIM_Cmd(TIM1, DISABLE);
 }
 
-#ifndef SUMP_H
-
 void usb_on_rx(uint8_t* data, uint16_t len) {
-#define MAX_LINE_LENGTH 100
   char line[MAX_LINE_LENGTH];
 
-  ring_buffer_u8_write(&_g_sump_usbInputRingBuffer, data, len);
-  while (ring_buffer_u8_readline(&_g_sump_usbInputRingBuffer, line, MAX_LINE_LENGTH) > 0) {
+  ring_buffer_u8_write(&g_usbInputRingBuffer, data, len);
+  while (ring_buffer_u8_readline(&g_usbInputRingBuffer, line, MAX_LINE_LENGTH) > 0) {
     debug_write_line(line);
   }
 }
-#endif
+
+void on_usart1_irq() {
+  char line[MAX_LINE_LENGTH];
+
+  if (USART_GetITStatus(DEBUG_USART, USART_IT_RXNE) != RESET) {
+    uint8_t data[1];
+    data[0] = USART_ReceiveData(DEBUG_USART);
+
+    ring_buffer_u8_write(&g_usbInputRingBuffer, data, 1);
+    while (ring_buffer_u8_readline(&g_usbInputRingBuffer, line, MAX_LINE_LENGTH) > 0) {
+      debug_write_line("+OK");
+      debug_write_line("!clear");
+      debug_write_line("!set name,stm32-rfid-clone");
+      debug_write_line("!set description,'125kHz RFID Clone for the STM32'");
+
+      debug_write_line("?create plot");
+      debug_write_line("!add graph,main,0,0,1,1");
+
+      debug_write_line("?add signals");
+      debug_write_line("!main.set timePerSample,0.000004");
+      debug_write_line("!main.addSignal 'writeen',1,0,1");
+      debug_write_line("!main.addSignal 'RF RX',1,0,1");
+      debug_write_line("!main.addSignal 'RF TX',1,0,1");
+      debug_write_line("!main.addSignal 'RF TX State',1,0,1");
+      debug_write_line("!main.addSignal 'Carrier',1,0,1");
+    }
+  }
+}

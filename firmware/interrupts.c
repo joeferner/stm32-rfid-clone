@@ -1,8 +1,9 @@
 
 #include "time.h"
 
-void on_dma1_ch2_irq();
-void on_tim4_irq();
+extern void on_dma1_ch2_irq();
+extern void on_tim4_irq();
+extern void on_usart1_irq();
 
 void NMI_Handler() {
 }
@@ -39,3 +40,8 @@ void TIM4_IRQHandler() {
 void SysTick_Handler() {
   time_SysTick_Handler();
 }
+
+void USART1_IRQHandler(void) {
+  on_usart1_irq();
+}
+

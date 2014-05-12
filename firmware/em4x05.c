@@ -1,7 +1,6 @@
 #include "em4x05.h"
 #include "delay.h"
 #include "debug.h"
-#include "sump.h"
 
 #define US_PER_RF_TICK 8
 
@@ -10,6 +9,8 @@
 
 extern void rf_tx_on();
 extern void rf_tx_off();
+
+extern void eeworkbench_begin_tx();
 
 void _em4x05_tx_first_stop();
 void _em4x05_tx(int i);
@@ -20,19 +21,22 @@ uint32_t _em4x05_config_to_uint32(em4x05_config* cfg);
 void _em4x05_write_uint32_calc(uint32_t data, uint8_t* bits);
 
 void em4x05_read(uint8_t addr) {
-  debug_write("em4x05_read: 0x");
+  debug_write("?BEGIN em4x05_read: 0x");
   debug_write_u16(addr, 16);
   debug_write_line("");
 
-  sump_trigger();
   debug_led_set(1);
   delay_ms(1);
+  eeworkbench_begin_tx();
+  delay_us(US_PER_RF_TICK * 5);
 
   _em4x05_tx_first_stop();
   _em4x05_tx(0);
   _em4x05_tx_command(COMMAND_READ);
   _em4x05_tx_addr(addr);
+
   debug_led_set(0);
+  debug_write_line("?END em4x05_read");
 }
 
 void _em4x05_tx_command(uint8_t command) {
@@ -100,7 +104,7 @@ uint32_t _em4x05_config_to_uint32(em4x05_config* cfg) {
 }
 
 void em4x05_write(uint8_t addr, uint32_t value) {
-  debug_write("BEGIN em4x05_write: 0x");
+  debug_write("?BEGIN em4x05_write: 0x");
   debug_write_u16(addr, 16);
   debug_write(", 0x");
   debug_write_u32(value, 16);
@@ -110,8 +114,10 @@ void em4x05_write(uint8_t addr, uint32_t value) {
   int i;
   _em4x05_write_uint32_calc(value, bits);
 
-  sump_trigger();
   debug_led_set(1);
+  delay_ms(1);
+  eeworkbench_begin_tx();
+  delay_us(US_PER_RF_TICK * 5);
 
   _em4x05_tx_first_stop();
   _em4x05_tx(0);
@@ -123,7 +129,7 @@ void em4x05_write(uint8_t addr, uint32_t value) {
   debug_led_set(0);
   delay_ms(100);
 
-  debug_write_line("END em4x05_write");
+  debug_write_line("?END em4x05_write");
 }
 
 void _em4x05_write_uint32_calc(uint32_t data, uint8_t* bits) {

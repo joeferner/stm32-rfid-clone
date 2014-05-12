@@ -42,9 +42,11 @@ void rf_rx_process_read_buffer();
 void writeen_setup();
 volatile int writeen_read();
 
-#define EEWORKBENCH_DATA_SIZE 2048
+#define EEWORKBENCH_DATA_SIZE 4096
 void eeworkbench_setup();
 void eeworkbench_begin_tx();
+uint8_t g_eeworbench_tx_buffer[EEWORKBENCH_DATA_SIZE];
+uint32_t g_eeworbench_tx_count;
 
 #define MAX_LINE_LENGTH 100
 #define INPUT_BUFFER_SIZE 100
@@ -69,7 +71,7 @@ int8_t readCount; // >0 number of 1s. <0 number of 0s. 0 waiting for 0 or 1.
 uint16_t readBufferOffset;
 uint8_t readBuffer[READ_BUFFER_LEN];
 
-uint32_t g_eeworbench_tx_count;
+volatile uint8_t g_rf_tx_state;
 
 typedef struct {
   uint32_t start;
@@ -229,8 +231,6 @@ void rf_tx_setup() {
   debug_write_line("?END rf_tx_setup");
 }
 
-volatile int g_rf_tx_state = 1;
-
 void rf_tx_on() {
   g_rf_tx_state = 1;
   TIM_Cmd(RF_TX_TIMER, ENABLE);
@@ -313,7 +313,7 @@ void on_dma1_ch2_irq() {
 void eeworkbench_setup() {
   TIM_TimeBaseInitTypeDef timeBaseInit;
 
-  g_eeworbench_tx_count = 0;
+  g_eeworbench_tx_count = EEWORKBENCH_DATA_SIZE;
 
   debug_write_line("?BEGIN eeworkbench_timer_setup");
 
@@ -342,30 +342,31 @@ void eeworkbench_setup() {
 
 void eeworkbench_begin_tx() {
   debug_write_line("!main.clear");
-  debug_write("!main.beginData ");
-  debug_write_u32(EEWORKBENCH_DATA_SIZE, 10);
-  debug_write_line("");
-  g_eeworbench_tx_count = EEWORKBENCH_DATA_SIZE;
+  g_eeworbench_tx_count = 0;
 }
 
 volatile uint8_t g_last_eeworkbench_tx = 0;
 
 void on_tim4_irq() {
   if (TIM_GetITStatus(TIM4, TIM_IT_Update) != RESET) {
-    TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
-    if (g_eeworbench_tx_count > 0) {
+    if (g_eeworbench_tx_count < EEWORKBENCH_DATA_SIZE) {
       uint8_t data = writeen_read() ? 0x80 : 0x00;
       data |= GPIO_ReadInputDataBit(RF_RX_PORT, RF_RX_PIN) ? 0x40 : 0x00;
       data |= GPIO_ReadInputDataBit(RF_TX_PORT, RF_TX_PIN) ? 0x20 : 0x00;
       data |= g_rf_tx_state ? 0x10 : 0x00;
       g_last_eeworkbench_tx = ((g_last_eeworkbench_tx ^ 0xff) & 0x0f) | (data & 0xf0);
-      debug_write_ch(g_last_eeworkbench_tx);
-      g_eeworbench_tx_count--;
-      if(g_eeworbench_tx_count == 0) {
+      g_eeworbench_tx_buffer[g_eeworbench_tx_count] = g_last_eeworkbench_tx;
+      g_eeworbench_tx_count++;
+      if(g_eeworbench_tx_count == EEWORKBENCH_DATA_SIZE) {
+        debug_write("!main.beginData ");
+        debug_write_u32(EEWORKBENCH_DATA_SIZE, 10);
+        debug_write_line("");
+        debug_write_bytes(g_eeworbench_tx_buffer, EEWORKBENCH_DATA_SIZE);
         debug_write_line("");
         debug_write_line("?done");
       }
     }
+    TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
   }
 }
 

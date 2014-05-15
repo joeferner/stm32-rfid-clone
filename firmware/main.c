@@ -42,6 +42,8 @@ void rf_rx_process_read_buffer();
 void writeen_setup();
 volatile int writeen_read();
 
+GPIO_InitTypeDef g_rfTxGpioInit;
+
 #define EEWORKBENCH_DATA_SIZE 4096
 void eeworkbench_setup();
 void eeworkbench_begin_tx();
@@ -184,7 +186,6 @@ volatile int writeen_read() {
 }
 
 void rf_tx_setup() {
-  GPIO_InitTypeDef GPIO_Config;
   TIM_TimeBaseInitTypeDef timeBaseInit;
   TIM_OCInitTypeDef ocInit;
 
@@ -195,10 +196,12 @@ void rf_tx_setup() {
   GPIO_PinRemapConfig(GPIO_FullRemap_TIM2, ENABLE);
 
   RCC_APB2PeriphClockCmd(RF_TX_RCC, ENABLE);
-  GPIO_Config.GPIO_Pin = RF_TX_PIN;
-  GPIO_Config.GPIO_Mode = GPIO_Mode_AF_PP;
-  GPIO_Config.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_Init(RF_TX_PORT, &GPIO_Config);
+
+  GPIO_StructInit(&g_rfTxGpioInit);
+  g_rfTxGpioInit.GPIO_Pin = RF_TX_PIN;
+  g_rfTxGpioInit.GPIO_Mode = GPIO_Mode_AF_PP;
+  g_rfTxGpioInit.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_Init(RF_TX_PORT, &g_rfTxGpioInit);
 
   // Time base configuration
   TIM_TimeBaseStructInit(&timeBaseInit);
@@ -233,6 +236,10 @@ void rf_tx_setup() {
 
 void rf_tx_on() {
   g_rf_tx_state = 1;
+
+  g_rfTxGpioInit.GPIO_Mode = GPIO_Mode_AF_PP;
+  GPIO_Init(RF_TX_PORT, &g_rfTxGpioInit);
+
   TIM_Cmd(RF_TX_TIMER, ENABLE);
   RF_TX_TIMER_CH_SetCompare(RF_TX_TIMER, RF_TX_PWM_PERIOD / 2);
 }
@@ -241,6 +248,10 @@ void rf_tx_off() {
   g_rf_tx_state = 0;
   TIM_Cmd(RF_TX_TIMER, DISABLE);
   RF_TX_TIMER_CH_SetCompare(RF_TX_TIMER, 0);
+
+  GPIO_ResetBits(RF_TX_PORT, RF_TX_PIN);
+  g_rfTxGpioInit.GPIO_Mode = GPIO_Mode_Out_PP;
+  GPIO_Init(RF_TX_PORT, &g_rfTxGpioInit);
 }
 
 void rf_rx_setup() {
@@ -480,7 +491,7 @@ void rf_rx_process_read_buffer() {
 
   rf_rx_disable();
 
-  debug_write("?code ");
+  debug_write("!code.set text,'");
   for (i = 0; i < readBufferOffset; i += 2) {
     if (readBuffer[i] == 1 && readBuffer[i + 1] == 0) {
       debug_write_ch('1');
@@ -490,7 +501,7 @@ void rf_rx_process_read_buffer() {
       debug_write_ch('E');
     }
   }
-  debug_write_line("");
+  debug_write_line("'");
 
   rf_rx_enable();
 }
@@ -537,8 +548,13 @@ void on_usart1_irq() {
       debug_write_line("!set name,stm32-rfid-clone");
       debug_write_line("!set description,'125kHz RFID Clone for the STM32'");
 
-      debug_write_line("?create plot");
+      debug_write_line("?add widgets");
       debug_write_line("!add graph,main,0,0,1,1");
+      debug_write_line("!add label,code,1,0,1,1");
+
+      debug_write_line("!code.set minWidth,150");
+      debug_write_line("!code.set title,'Code'");
+      debug_write_line("!code.set text,'xxxxxxxxxxxxxxxxxxxx'");
 
       debug_write_line("?add signals");
       debug_write_line("!main.set timePerSample,0.000004");
@@ -547,6 +563,7 @@ void on_usart1_irq() {
       debug_write_line("!main.addSignal 'RF TX',1,0,1");
       debug_write_line("!main.addSignal 'RF TX State',1,0,1");
       debug_write_line("!main.addSignal 'Carrier',1,0,1");
+      debug_write_line("!main.addAnalyzer EM4305,\"toDevice=3\"");
     }
   }
 }

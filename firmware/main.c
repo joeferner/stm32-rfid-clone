@@ -235,13 +235,13 @@ void rf_tx_setup() {
 }
 
 void rf_tx_on() {
-  g_rf_tx_state = 1;
-
   g_rfTxGpioInit.GPIO_Mode = GPIO_Mode_AF_PP;
   GPIO_Init(RF_TX_PORT, &g_rfTxGpioInit);
 
   TIM_Cmd(RF_TX_TIMER, ENABLE);
   RF_TX_TIMER_CH_SetCompare(RF_TX_TIMER, RF_TX_PWM_PERIOD / 2);
+
+  g_rf_tx_state = 1;
 }
 
 void rf_tx_off() {
@@ -346,7 +346,7 @@ void eeworkbench_setup() {
 
   TIM_ITConfig(TIM4, TIM_IT_Update, ENABLE);
 
-  TIM_Cmd(TIM4, ENABLE);
+  //TIM_Cmd(TIM4, ENABLE);
 
   debug_write_line("?END eeworkbench_timer_setup");
 }
@@ -363,11 +363,10 @@ void on_tim4_irq() {
     if (g_eeworbench_tx_count < EEWORKBENCH_DATA_SIZE) {
       uint8_t data = writeen_read() ? 0x80 : 0x00;
       data |= GPIO_ReadInputDataBit(RF_RX_PORT, RF_RX_PIN) ? 0x40 : 0x00;
-      data |= GPIO_ReadInputDataBit(RF_TX_PORT, RF_TX_PIN) ? 0x20 : 0x00;
-      data |= g_rf_tx_state ? 0x10 : 0x00;
-      g_last_eeworkbench_tx = ((g_last_eeworkbench_tx ^ 0xff) & 0x0f) | (data & 0xf0);
-      g_eeworbench_tx_buffer[g_eeworbench_tx_count] = g_last_eeworkbench_tx;
-      g_eeworbench_tx_count++;
+      data |= g_rf_tx_state ? 0x20 : 0x00;
+      g_last_eeworkbench_tx = ((g_last_eeworkbench_tx ^ 0xff) & 0x1f) | (data & 0xe0);
+      data |= GPIO_ReadInputDataBit(RF_TX_PORT, RF_TX_PIN) ? 0x01 : 0x00;
+      g_eeworbench_tx_buffer[g_eeworbench_tx_count++] = g_last_eeworkbench_tx;
       if(g_eeworbench_tx_count == EEWORKBENCH_DATA_SIZE) {
         debug_write("!main.beginData ");
         debug_write_u32(EEWORKBENCH_DATA_SIZE, 10);
@@ -561,9 +560,8 @@ void on_usart1_irq() {
       debug_write_line("!main.addSignal 'writeen',1,0,1");
       debug_write_line("!main.addSignal 'RF RX',1,0,1");
       debug_write_line("!main.addSignal 'RF TX',1,0,1");
-      debug_write_line("!main.addSignal 'RF TX State',1,0,1");
       debug_write_line("!main.addSignal 'Carrier',1,0,1");
-      debug_write_line("!main.addAnalyzer EM4305,\"toDevice=3\"");
+      debug_write_line("!main.addAnalyzer EM4305,\"toDevice=2\"");
     }
   }
 }

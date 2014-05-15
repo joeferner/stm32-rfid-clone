@@ -9,5 +9,5 @@ void delay_ms(uint32_t ms) {
 
 void delay_us(uint32_t us) {
   volatile uint32_t i;
-  for(i = (5 * us); i != 0; i--) {}
+  for(i = (6 * us); i != 0; i--) {}
 }

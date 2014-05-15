@@ -212,5 +212,5 @@ void _em4x05_tx(int i) {
 #endif
 
 void _em4x05_delay(int rfTicks) {
-  delay_us((US_PER_RF_TICK * rfTicks) + 8);
+  delay_us(US_PER_RF_TICK * rfTicks);
 }
